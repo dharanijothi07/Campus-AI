@@ -1,6 +1,5 @@
 {
-  "name": "campus-ai-root",
-  "version": "1.0.0",
+  "name": "campus-ai",
   "private": true,
   "scripts": {
     "build": "npm run build --prefix frontend"

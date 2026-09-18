@@ -62,7 +62,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/events", "/api/events/*").permitAll()
                 .requestMatchers("/h2-console/**").permitAll()
                 .requestMatchers("/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
-                .anyRequest().authenticated()
+                .requestMatchers("/api/**").authenticated()
+                .anyRequest().permitAll()
             );
 
         http.headers(headers -> headers.frameOptions(frame -> frame.disable()));

@@ -143,20 +143,64 @@ export const eventService = {
     }
   },
 
-  toggleApproveEvent: async (id, approved = true) => {
+  approveEvent: async (id) => {
     try {
-      const res = await api.patch(`/admin/events/${id}/approve?approved=${approved}`);
+      const res = await api.post(`/admin/events/${id}/approve`);
       return res.data;
     } catch (e) {
       try {
-        const res = await api.patch(`/events/${id}/approve?approved=${approved}`);
+        const res = await api.patch(`/admin/events/${id}/approve`);
         return res.data;
       } catch (err) {
         const found = MOCK_EVENTS.find(evt => evt.id === Number(id));
-        if (found) found.isApproved = approved;
-        return found || { id, isApproved: approved };
+        if (found) {
+          found.approvalStatus = 'APPROVED';
+          found.isApproved = true;
+        }
+        return found || { id, approvalStatus: 'APPROVED', isApproved: true };
       }
     }
+  },
+
+  rejectEvent: async (id) => {
+    try {
+      const res = await api.post(`/admin/events/${id}/reject`);
+      return res.data;
+    } catch (e) {
+      try {
+        const res = await api.patch(`/admin/events/${id}/reject`);
+        return res.data;
+      } catch (err) {
+        const found = MOCK_EVENTS.find(evt => evt.id === Number(id));
+        if (found) {
+          found.approvalStatus = 'REJECTED';
+          found.isApproved = false;
+        }
+        return found || { id, approvalStatus: 'REJECTED', isApproved: false };
+      }
+    }
+  },
+
+  updateAdminEvent: async (id, eventData) => {
+    try {
+      const res = await api.put(`/admin/events/${id}`, eventData);
+      return res.data;
+    } catch (e) {
+      return { ...eventData, id };
+    }
+  },
+
+  deleteAdminEvent: async (id) => {
+    try {
+      await api.delete(`/admin/events/${id}`);
+      return true;
+    } catch (e) {
+      return true;
+    }
+  },
+
+  toggleApproveEvent: async (id, approved = true) => {
+    return approved ? eventService.approveEvent(id) : eventService.rejectEvent(id);
   },
 
   verifyEvent: async (id) => {

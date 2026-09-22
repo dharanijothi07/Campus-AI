@@ -69,9 +69,10 @@ CREATE TABLE IF NOT EXISTS events (
     skills_required TEXT NOT NULL,
     registration_link VARCHAR(500) NOT NULL,
     organizer_name VARCHAR(255),
-    location_mode VARCHAR(50) DEFAULT 'Offline', -- Online, Offline, Hybrid
+    location_mode VARCHAR(50) DEFAULT 'OFFLINE', -- ONLINE, OFFLINE, HYBRID
     image_url VARCHAR(1000),
-    is_approved BOOLEAN DEFAULT TRUE,
+    approval_status VARCHAR(20) DEFAULT 'PENDING', -- PENDING, APPROVED, REJECTED
+    is_approved BOOLEAN DEFAULT FALSE,
     quality_score DOUBLE DEFAULT 80.0,
     is_verified BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,

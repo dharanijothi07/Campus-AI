@@ -11,6 +11,10 @@ import java.util.List;
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
 
+    List<Event> findByApprovalStatusOrderByEventDateAsc(String approvalStatus);
+
+    List<Event> findByApprovalStatusIgnoreCase(String approvalStatus);
+
     List<Event> findByIsApprovedTrueOrderByEventDateAsc();
 
     List<Event> findByIsApprovedTrueAndCategoryNameIgnoreCase(String categoryName);
@@ -23,7 +27,7 @@ public interface EventRepository extends JpaRepository<Event, Long> {
 
     List<Event> findByOrganizerId(Long organizerId);
 
-    @Query("SELECT e FROM Event e WHERE e.isApproved = true AND (" +
+    @Query("SELECT e FROM Event e WHERE (e.approvalStatus = 'APPROVED' OR (e.approvalStatus IS NULL AND e.isApproved = true)) AND (" +
            "LOWER(e.title) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(e.description) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
            "LOWER(e.skillsRequired) LIKE LOWER(CONCAT('%', :query, '%')) OR " +

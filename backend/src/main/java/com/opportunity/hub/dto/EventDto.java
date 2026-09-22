@@ -16,8 +16,9 @@ public class EventDto {
         private String skillsRequired;
         private String registrationLink;
         private String organizerName;
-        private String locationMode; // Online, Offline, Hybrid
+        private String locationMode; // ONLINE, OFFLINE, HYBRID
         private String imageUrl;
+        private String approvalStatus; // PENDING, APPROVED, REJECTED
         private Boolean isApproved;
 
         public EventRequest() {}
@@ -48,6 +49,8 @@ public class EventDto {
         public void setLocationMode(String locationMode) { this.locationMode = locationMode; }
         public String getImageUrl() { return imageUrl; }
         public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+        public String getApprovalStatus() { return approvalStatus; }
+        public void setApprovalStatus(String approvalStatus) { this.approvalStatus = approvalStatus; }
         public Boolean getIsApproved() { return isApproved; }
         public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
     }
@@ -67,6 +70,7 @@ public class EventDto {
         private String organizerName;
         private String locationMode;
         private String imageUrl;
+        private String approvalStatus; // PENDING, APPROVED, REJECTED
         private Boolean isApproved;
         private Double qualityScore;
         private Boolean isVerified;
@@ -102,6 +106,8 @@ public class EventDto {
         public void setLocationMode(String locationMode) { this.locationMode = locationMode; }
         public String getImageUrl() { return imageUrl; }
         public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+        public String getApprovalStatus() { return approvalStatus; }
+        public void setApprovalStatus(String approvalStatus) { this.approvalStatus = approvalStatus; }
         public Boolean getIsApproved() { return isApproved; }
         public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
         public Double getQualityScore() { return qualityScore; }

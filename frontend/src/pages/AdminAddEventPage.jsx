@@ -26,12 +26,13 @@ export const AdminAddEventPage = () => {
     categoryName: 'Hackathon',
     eventDate: '',
     location: '',
-    locationMode: 'Online', // Online, Offline, Hybrid
+    locationMode: 'ONLINE', // ONLINE, OFFLINE, HYBRID
     eligibility: '',
     deadline: '',
     registrationLink: '',
     imageUrl: '',
-    isApproved: true
+    approvalStatus: 'PENDING',
+    isApproved: false
   });
 
   const [submitting, setSubmitting] = useState(false);
@@ -40,10 +41,18 @@ export const AdminAddEventPage = () => {
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: type === 'checkbox' ? checked : value
-    }));
+    if (name === 'isApproved') {
+      setFormData(prev => ({
+        ...prev,
+        isApproved: checked,
+        approvalStatus: checked ? 'APPROVED' : 'PENDING'
+      }));
+    } else {
+      setFormData(prev => ({
+        ...prev,
+        [name]: type === 'checkbox' ? checked : value
+      }));
+    }
   };
 
   const handleSubmit = async (e) => {
@@ -226,9 +235,9 @@ export const AdminAddEventPage = () => {
                 onChange={handleChange}
                 className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500 transition-colors"
               >
-                <option value="Online">Online / Virtual</option>
-                <option value="Offline">Offline / On-Campus</option>
-                <option value="Hybrid">Hybrid</option>
+                <option value="ONLINE">Online / Virtual</option>
+                <option value="OFFLINE">Offline / On-Campus</option>
+                <option value="HYBRID">Hybrid</option>
               </select>
             </div>
 

@@ -53,13 +53,16 @@ public class Event {
     private String organizerName;
 
     @Column(name = "location_mode", length = 50)
-    private String locationMode = "Offline"; // Online, Offline, Hybrid
+    private String locationMode = "OFFLINE"; // ONLINE, OFFLINE, HYBRID
 
     @Column(name = "image_url", length = 1000)
     private String imageUrl;
 
+    @Column(name = "approval_status", length = 20, nullable = false)
+    private String approvalStatus = "PENDING"; // PENDING, APPROVED, REJECTED
+
     @Column(name = "is_approved")
-    private Boolean isApproved = true;
+    private Boolean isApproved = false;
 
     @Column(name = "quality_score")
     private Double qualityScore = 80.0;
@@ -128,14 +131,40 @@ public class Event {
     public String getOrganizerName() { return organizerName; }
     public void setOrganizerName(String organizerName) { this.organizerName = organizerName; }
 
-    public String getLocationMode() { return locationMode; }
-    public void setLocationMode(String locationMode) { this.locationMode = locationMode; }
+    public String getLocationMode() { 
+        return locationMode != null ? locationMode.toUpperCase() : "OFFLINE"; 
+    }
+    public void setLocationMode(String locationMode) { 
+        this.locationMode = locationMode != null ? locationMode.toUpperCase() : "OFFLINE"; 
+    }
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
 
-    public Boolean getIsApproved() { return isApproved; }
-    public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
+    public String getApprovalStatus() {
+        if (approvalStatus == null || approvalStatus.trim().isEmpty()) {
+            return Boolean.TRUE.equals(isApproved) ? "APPROVED" : "PENDING";
+        }
+        return approvalStatus.toUpperCase();
+    }
+
+    public void setApprovalStatus(String approvalStatus) {
+        this.approvalStatus = approvalStatus != null ? approvalStatus.toUpperCase() : "PENDING";
+        this.isApproved = "APPROVED".equalsIgnoreCase(this.approvalStatus);
+    }
+
+    public Boolean getIsApproved() { 
+        return "APPROVED".equalsIgnoreCase(getApprovalStatus()); 
+    }
+
+    public void setIsApproved(Boolean isApproved) { 
+        this.isApproved = isApproved;
+        if (Boolean.TRUE.equals(isApproved)) {
+            this.approvalStatus = "APPROVED";
+        } else if ("APPROVED".equalsIgnoreCase(this.approvalStatus)) {
+            this.approvalStatus = "PENDING";
+        }
+    }
 
     public Double getQualityScore() { return qualityScore; }
     public void setQualityScore(Double qualityScore) { this.qualityScore = qualityScore; }

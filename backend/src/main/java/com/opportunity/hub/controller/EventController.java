@@ -21,7 +21,8 @@ public class EventController {
     @GetMapping
     public ResponseEntity<List<EventDto.EventResponse>> getAllEvents(
             @RequestParam(name = "approvedOnly", required = false, defaultValue = "true") Boolean approvedOnly) {
-        return ResponseEntity.ok(eventService.getAllEvents(approvedOnly));
+        // Student-facing event APIs must return ONLY APPROVED events
+        return ResponseEntity.ok(eventService.getAllEvents(true));
     }
 
     @PatchMapping("/{id}/approve")
@@ -39,6 +40,11 @@ public class EventController {
     @PostMapping
     public ResponseEntity<EventDto.EventResponse> createEvent(Authentication authentication, @RequestBody EventDto.EventRequest req) {
         String email = authentication != null ? authentication.getName() : "organizer@example.com";
+        // Default to PENDING unless explicitly approved
+        if (!"APPROVED".equalsIgnoreCase(req.getApprovalStatus()) && !Boolean.TRUE.equals(req.getIsApproved())) {
+            req.setApprovalStatus("PENDING");
+            req.setIsApproved(false);
+        }
         return ResponseEntity.ok(eventService.createEvent(email, req));
     }
 

@@ -41,7 +41,11 @@ public class EventService {
     public List<EventDto.EventResponse> getAllEvents(Boolean approvedOnly) {
         List<Event> events;
         if (Boolean.TRUE.equals(approvedOnly)) {
-            events = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
+            events = eventRepository.findByApprovalStatusOrderByEventDateAsc("APPROVED");
+            if (events.isEmpty()) {
+                // Fallback in case existing records in database haven't run migration yet
+                events = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
+            }
         } else {
             events = eventRepository.findAll();
         }
@@ -78,9 +82,20 @@ public class EventService {
         event.setSkillsRequired(req.getSkillsRequired() != null ? req.getSkillsRequired() : "General Tech Skills");
         event.setRegistrationLink(req.getRegistrationLink() != null ? req.getRegistrationLink() : "https://opportunityhub.dev/register");
         event.setOrganizerName(req.getOrganizerName() != null && !req.getOrganizerName().trim().isEmpty() ? req.getOrganizerName().trim() : organizer.getFullName());
-        event.setLocationMode(req.getLocationMode() != null ? req.getLocationMode() : "Online");
+        
+        // Location mode: ONLINE, OFFLINE, HYBRID
+        event.setLocationMode(req.getLocationMode() != null ? req.getLocationMode().toUpperCase() : "OFFLINE");
         event.setImageUrl(req.getImageUrl());
-        event.setIsApproved(req.getIsApproved() != null ? req.getIsApproved() : true);
+        
+        // Default to PENDING unless explicitly specified as APPROVED
+        String initialStatus = "PENDING";
+        if ("APPROVED".equalsIgnoreCase(req.getApprovalStatus()) || Boolean.TRUE.equals(req.getIsApproved())) {
+            initialStatus = "APPROVED";
+        } else if ("REJECTED".equalsIgnoreCase(req.getApprovalStatus())) {
+            initialStatus = "REJECTED";
+        }
+        event.setApprovalStatus(initialStatus);
+        
         event.setQualityScore(88.0);
         event.setIsVerified(true);
 
@@ -94,7 +109,7 @@ public class EventService {
         verification.setMissingInfo(false);
         verification.setQualityScore(88.0);
         verification.setCredibilityScore(92.0);
-        verification.setVerificationSummary("Verified upon organizer creation. High credibility scores.");
+        verification.setVerificationSummary("Verified upon creation. Status: " + initialStatus);
         verification.setStatus("VERIFIED");
         verificationRepository.save(verification);
 
@@ -117,21 +132,40 @@ public class EventService {
         if (req.getSkillsRequired() != null) event.setSkillsRequired(req.getSkillsRequired());
         if (req.getRegistrationLink() != null) event.setRegistrationLink(req.getRegistrationLink());
         if (req.getOrganizerName() != null) event.setOrganizerName(req.getOrganizerName());
-        if (req.getLocationMode() != null) event.setLocationMode(req.getLocationMode());
+        if (req.getLocationMode() != null) event.setLocationMode(req.getLocationMode().toUpperCase());
         if (req.getImageUrl() != null) event.setImageUrl(req.getImageUrl());
-        if (req.getIsApproved() != null) event.setIsApproved(req.getIsApproved());
+        
+        if (req.getApprovalStatus() != null) {
+            event.setApprovalStatus(req.getApprovalStatus().toUpperCase());
+        } else if (req.getIsApproved() != null) {
+            event.setIsApproved(req.getIsApproved());
+        }
 
         Event saved = eventRepository.save(event);
         return mapToResponse(saved);
     }
 
     @Transactional
-    public EventDto.EventResponse setApprovalStatus(Long id, boolean approved) {
+    public EventDto.EventResponse approveEvent(Long id) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
-        event.setIsApproved(approved);
+        event.setApprovalStatus("APPROVED");
         Event saved = eventRepository.save(event);
         return mapToResponse(saved);
+    }
+
+    @Transactional
+    public EventDto.EventResponse rejectEvent(Long id) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+        event.setApprovalStatus("REJECTED");
+        Event saved = eventRepository.save(event);
+        return mapToResponse(saved);
+    }
+
+    @Transactional
+    public EventDto.EventResponse setApprovalStatus(Long id, boolean approved) {
+        return approved ? approveEvent(id) : rejectEvent(id);
     }
 
     @Transactional
@@ -161,9 +195,10 @@ public class EventService {
             orgName = event.getOrganizer() != null ? event.getOrganizer().getFullName() : "Verified Organizer";
         }
         res.setOrganizerName(orgName);
-        res.setLocationMode(event.getLocationMode() != null ? event.getLocationMode() : "Online");
+        res.setLocationMode(event.getLocationMode() != null ? event.getLocationMode().toUpperCase() : "OFFLINE");
         res.setImageUrl(event.getImageUrl());
-        res.setIsApproved(event.getIsApproved() != null ? event.getIsApproved() : true);
+        res.setApprovalStatus(event.getApprovalStatus());
+        res.setIsApproved(event.getIsApproved());
         res.setQualityScore(event.getQualityScore());
         res.setIsVerified(event.getIsVerified());
         return res;

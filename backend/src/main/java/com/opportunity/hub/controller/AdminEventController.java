@@ -29,18 +29,35 @@ public class AdminEventController {
             Authentication authentication,
             @RequestBody EventDto.EventRequest req) {
         String email = authentication != null ? authentication.getName() : "admin@example.com";
-        // Default admin created events to approved if not explicitly specified
-        if (req.getIsApproved() == null) {
+        // New events created by Admin/Organizer should use APPROVED only when explicitly approved. Otherwise use PENDING.
+        if (!"APPROVED".equalsIgnoreCase(req.getApprovalStatus()) && !Boolean.TRUE.equals(req.getIsApproved())) {
+            req.setApprovalStatus("PENDING");
+            req.setIsApproved(false);
+        } else {
+            req.setApprovalStatus("APPROVED");
             req.setIsApproved(true);
         }
         return ResponseEntity.ok(eventService.createEvent(email, req));
     }
 
+    @PostMapping("/{id}/approve")
+    public ResponseEntity<EventDto.EventResponse> approveEventPost(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.approveEvent(id));
+    }
+
     @PatchMapping("/{id}/approve")
-    public ResponseEntity<EventDto.EventResponse> toggleApproval(
-            @PathVariable Long id,
-            @RequestParam(name = "approved", required = false, defaultValue = "true") Boolean approved) {
-        return ResponseEntity.ok(eventService.setApprovalStatus(id, approved));
+    public ResponseEntity<EventDto.EventResponse> approveEventPatch(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.approveEvent(id));
+    }
+
+    @PostMapping("/{id}/reject")
+    public ResponseEntity<EventDto.EventResponse> rejectEventPost(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.rejectEvent(id));
+    }
+
+    @PatchMapping("/{id}/reject")
+    public ResponseEntity<EventDto.EventResponse> rejectEventPatch(@PathVariable Long id) {
+        return ResponseEntity.ok(eventService.rejectEvent(id));
     }
 
     @PutMapping("/{id}")

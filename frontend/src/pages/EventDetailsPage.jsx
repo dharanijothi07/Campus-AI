@@ -58,22 +58,58 @@ export const EventDetailsPage = () => {
 
       {/* Top Main Card */}
       <div className="glass-card p-6 lg:p-8 rounded-3xl border border-gray-800 space-y-6">
+        {/* Banner image if available */}
+        {event.imageUrl && (
+          <div className="w-full h-56 sm:h-72 rounded-2xl overflow-hidden bg-gray-900 relative -mt-2">
+            <img
+              src={event.imageUrl}
+              alt={event.title}
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-[#0B0F19] via-transparent to-transparent pointer-events-none" />
+            <span className="absolute bottom-4 left-4 px-3 py-1 rounded-full text-xs font-bold bg-black/80 backdrop-blur-md text-cyan-300 border border-white/10">
+              {event.locationMode || 'Online'}
+            </span>
+          </div>
+        )}
+
         <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 flex-wrap">
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/10 text-cyan-400 border border-cyan-500/30">
               {event.categoryName}
             </span>
+            {event.locationMode && (
+              <span className="px-3 py-1 rounded-full text-xs font-bold bg-gray-800 text-gray-300 border border-gray-700">
+                {event.locationMode}
+              </span>
+            )}
             <span className="px-3 py-1 rounded-full text-xs font-bold bg-purple-500/10 text-purple-400 border border-purple-500/30">
-              {event.departmentTarget}
+              {event.departmentTarget || 'All Departments'}
             </span>
           </div>
 
           <VerificationBadge qualityScore={event.qualityScore || 92} isVerified={event.isVerified} compact />
         </div>
 
-        <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{event.title}</h1>
+        <div>
+          <span className="text-xs font-bold text-purple-400 uppercase tracking-wider block mb-1">
+            Organized by {event.organizerName || 'Verified Partner'}
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold text-white">{event.title}</h1>
+        </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 bg-gray-900/60 p-4 rounded-2xl border border-gray-800 text-xs">
+        <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 bg-gray-900/60 p-4 rounded-2xl border border-gray-800 text-xs">
+          <div className="flex items-center gap-2">
+            <Building className="w-4 h-4 text-purple-400 shrink-0" />
+            <div>
+              <span className="block text-gray-500 font-semibold">Organizer</span>
+              <span className="text-gray-200 font-bold truncate">{event.organizerName || 'Official'}</span>
+            </div>
+          </div>
           <div className="flex items-center gap-2">
             <MapPin className="w-4 h-4 text-cyan-400 shrink-0" />
             <div>

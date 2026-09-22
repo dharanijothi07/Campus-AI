@@ -39,7 +39,7 @@ public class ChatbotService {
         String query = request.getQuery() != null ? request.getQuery().trim() : "";
         String lowerQuery = query.toLowerCase();
 
-        List<Event> allEvents = eventRepository.findAll();
+        List<Event> allEvents = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
         List<EventDto.EventResponse> suggestedEvents = new ArrayList<>();
         String replyText = "";
 

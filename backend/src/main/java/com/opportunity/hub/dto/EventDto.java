@@ -15,6 +15,10 @@ public class EventDto {
         private String eligibility;
         private String skillsRequired;
         private String registrationLink;
+        private String organizerName;
+        private String locationMode; // Online, Offline, Hybrid
+        private String imageUrl;
+        private Boolean isApproved;
 
         public EventRequest() {}
 
@@ -38,6 +42,14 @@ public class EventDto {
         public void setSkillsRequired(String skillsRequired) { this.skillsRequired = skillsRequired; }
         public String getRegistrationLink() { return registrationLink; }
         public void setRegistrationLink(String registrationLink) { this.registrationLink = registrationLink; }
+        public String getOrganizerName() { return organizerName; }
+        public void setOrganizerName(String organizerName) { this.organizerName = organizerName; }
+        public String getLocationMode() { return locationMode; }
+        public void setLocationMode(String locationMode) { this.locationMode = locationMode; }
+        public String getImageUrl() { return imageUrl; }
+        public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+        public Boolean getIsApproved() { return isApproved; }
+        public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
     }
 
     public static class EventResponse {
@@ -53,6 +65,9 @@ public class EventDto {
         private String skillsRequired;
         private String registrationLink;
         private String organizerName;
+        private String locationMode;
+        private String imageUrl;
+        private Boolean isApproved;
         private Double qualityScore;
         private Boolean isVerified;
         private Double aiMatchPercentage; // Optional match score for student view
@@ -83,6 +98,12 @@ public class EventDto {
         public void setRegistrationLink(String registrationLink) { this.registrationLink = registrationLink; }
         public String getOrganizerName() { return organizerName; }
         public void setOrganizerName(String organizerName) { this.organizerName = organizerName; }
+        public String getLocationMode() { return locationMode; }
+        public void setLocationMode(String locationMode) { this.locationMode = locationMode; }
+        public String getImageUrl() { return imageUrl; }
+        public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+        public Boolean getIsApproved() { return isApproved; }
+        public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
         public Double getQualityScore() { return qualityScore; }
         public void setQualityScore(Double qualityScore) { this.qualityScore = qualityScore; }
         public Boolean getIsVerified() { return isVerified; }

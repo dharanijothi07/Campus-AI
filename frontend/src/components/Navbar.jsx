@@ -84,16 +84,26 @@ export const Navbar = () => {
             Registrations
           </Link>
 
-          {user?.role === 'ORGANIZER' && (
-            <Link
-              to="/organizer"
-              className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
-                isActive('/organizer') ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30' : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
-              }`}
-            >
-              <ShieldCheck className="w-4 h-4 text-purple-400" />
-              Organizer HQ
-            </Link>
+          {(user?.role === 'ADMIN' || user?.role === 'ORGANIZER') && (
+            <>
+              <Link
+                to="/admin/events"
+                className={`px-3.5 py-1.5 rounded-lg text-sm font-medium transition-all flex items-center gap-1.5 ${
+                  isActive('/admin/events') ? 'bg-purple-500/10 text-purple-400 border border-purple-500/30' : 'text-gray-300 hover:text-white hover:bg-gray-800/50'
+                }`}
+              >
+                <ShieldCheck className="w-4 h-4 text-purple-400" />
+                Admin HQ
+              </Link>
+              <Link
+                to="/admin/add-event"
+                className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center gap-1 ${
+                  isActive('/admin/add-event') ? 'bg-cyan-500 text-black shadow-md' : 'bg-cyan-500/20 text-cyan-300 hover:bg-cyan-500/30 border border-cyan-500/40'
+                }`}
+              >
+                + Add Event
+              </Link>
+            </>
           )}
         </div>
 

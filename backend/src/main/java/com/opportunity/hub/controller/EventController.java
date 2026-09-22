@@ -19,8 +19,16 @@ public class EventController {
     }
 
     @GetMapping
-    public ResponseEntity<List<EventDto.EventResponse>> getAllEvents() {
-        return ResponseEntity.ok(eventService.getAllEvents());
+    public ResponseEntity<List<EventDto.EventResponse>> getAllEvents(
+            @RequestParam(name = "approvedOnly", required = false, defaultValue = "true") Boolean approvedOnly) {
+        return ResponseEntity.ok(eventService.getAllEvents(approvedOnly));
+    }
+
+    @PatchMapping("/{id}/approve")
+    public ResponseEntity<EventDto.EventResponse> setApproval(
+            @PathVariable Long id,
+            @RequestParam(name = "approved", required = false, defaultValue = "true") Boolean approved) {
+        return ResponseEntity.ok(eventService.setApprovalStatus(id, approved));
     }
 
     @GetMapping("/{id}")

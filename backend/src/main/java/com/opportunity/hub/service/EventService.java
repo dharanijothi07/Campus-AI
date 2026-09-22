@@ -35,7 +35,17 @@ public class EventService {
     }
 
     public List<EventDto.EventResponse> getAllEvents() {
-        return eventRepository.findAll().stream()
+        return getAllEvents(true);
+    }
+
+    public List<EventDto.EventResponse> getAllEvents(Boolean approvedOnly) {
+        List<Event> events;
+        if (Boolean.TRUE.equals(approvedOnly)) {
+            events = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
+        } else {
+            events = eventRepository.findAll();
+        }
+        return events.stream()
                 .map(this::mapToResponse)
                 .collect(Collectors.toList());
     }
@@ -67,6 +77,10 @@ public class EventService {
         event.setEligibility(req.getEligibility() != null ? req.getEligibility() : "Open to all students");
         event.setSkillsRequired(req.getSkillsRequired() != null ? req.getSkillsRequired() : "General Tech Skills");
         event.setRegistrationLink(req.getRegistrationLink() != null ? req.getRegistrationLink() : "https://opportunityhub.dev/register");
+        event.setOrganizerName(req.getOrganizerName() != null && !req.getOrganizerName().trim().isEmpty() ? req.getOrganizerName().trim() : organizer.getFullName());
+        event.setLocationMode(req.getLocationMode() != null ? req.getLocationMode() : "Online");
+        event.setImageUrl(req.getImageUrl());
+        event.setIsApproved(req.getIsApproved() != null ? req.getIsApproved() : true);
         event.setQualityScore(88.0);
         event.setIsVerified(true);
 
@@ -102,7 +116,20 @@ public class EventService {
         if (req.getEligibility() != null) event.setEligibility(req.getEligibility());
         if (req.getSkillsRequired() != null) event.setSkillsRequired(req.getSkillsRequired());
         if (req.getRegistrationLink() != null) event.setRegistrationLink(req.getRegistrationLink());
+        if (req.getOrganizerName() != null) event.setOrganizerName(req.getOrganizerName());
+        if (req.getLocationMode() != null) event.setLocationMode(req.getLocationMode());
+        if (req.getImageUrl() != null) event.setImageUrl(req.getImageUrl());
+        if (req.getIsApproved() != null) event.setIsApproved(req.getIsApproved());
 
+        Event saved = eventRepository.save(event);
+        return mapToResponse(saved);
+    }
+
+    @Transactional
+    public EventDto.EventResponse setApprovalStatus(Long id, boolean approved) {
+        Event event = eventRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
+        event.setIsApproved(approved);
         Event saved = eventRepository.save(event);
         return mapToResponse(saved);
     }
@@ -128,7 +155,15 @@ public class EventService {
         res.setEligibility(event.getEligibility());
         res.setSkillsRequired(event.getSkillsRequired());
         res.setRegistrationLink(event.getRegistrationLink());
-        res.setOrganizerName(event.getOrganizer() != null ? event.getOrganizer().getFullName() : "Verified Organizer");
+        
+        String orgName = event.getOrganizerName();
+        if (orgName == null || orgName.trim().isEmpty()) {
+            orgName = event.getOrganizer() != null ? event.getOrganizer().getFullName() : "Verified Organizer";
+        }
+        res.setOrganizerName(orgName);
+        res.setLocationMode(event.getLocationMode() != null ? event.getLocationMode() : "Online");
+        res.setImageUrl(event.getImageUrl());
+        res.setIsApproved(event.getIsApproved() != null ? event.getIsApproved() : true);
         res.setQualityScore(event.getQualityScore());
         res.setIsVerified(event.getIsVerified());
         return res;

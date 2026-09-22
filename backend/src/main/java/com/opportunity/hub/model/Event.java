@@ -49,6 +49,18 @@ public class Event {
     @Column(name = "registration_link", length = 500, nullable = false)
     private String registrationLink;
 
+    @Column(name = "organizer_name")
+    private String organizerName;
+
+    @Column(name = "location_mode", length = 50)
+    private String locationMode = "Offline"; // Online, Offline, Hybrid
+
+    @Column(name = "image_url", length = 1000)
+    private String imageUrl;
+
+    @Column(name = "is_approved")
+    private Boolean isApproved = true;
+
     @Column(name = "quality_score")
     private Double qualityScore = 80.0;
 
@@ -112,6 +124,18 @@ public class Event {
 
     public String getRegistrationLink() { return registrationLink; }
     public void setRegistrationLink(String registrationLink) { this.registrationLink = registrationLink; }
+
+    public String getOrganizerName() { return organizerName; }
+    public void setOrganizerName(String organizerName) { this.organizerName = organizerName; }
+
+    public String getLocationMode() { return locationMode; }
+    public void setLocationMode(String locationMode) { this.locationMode = locationMode; }
+
+    public String getImageUrl() { return imageUrl; }
+    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public Boolean getIsApproved() { return isApproved; }
+    public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
 
     public Double getQualityScore() { return qualityScore; }
     public void setQualityScore(Double qualityScore) { this.qualityScore = qualityScore; }

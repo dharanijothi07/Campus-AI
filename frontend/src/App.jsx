@@ -21,6 +21,8 @@ import { MyRegistrationsPage } from './pages/MyRegistrationsPage';
 import { NotificationsPage } from './pages/NotificationsPage';
 import { OrganizerDashboardPage } from './pages/OrganizerDashboardPage';
 import { CreateEventPage } from './pages/CreateEventPage';
+import { AdminAddEventPage } from './pages/AdminAddEventPage';
+import { AdminEventsPage } from './pages/AdminEventsPage';
 
 export function App() {
   return (
@@ -47,6 +49,9 @@ export function App() {
 
                   <Route path="/organizer" element={<ProtectedRoute requiredRole="ORGANIZER"><OrganizerDashboardPage /></ProtectedRoute>} />
                   <Route path="/organizer/create" element={<ProtectedRoute requiredRole="ORGANIZER"><CreateEventPage /></ProtectedRoute>} />
+
+                  <Route path="/admin/events" element={<ProtectedRoute requiredRole="ADMIN"><AdminEventsPage /></ProtectedRoute>} />
+                  <Route path="/admin/add-event" element={<ProtectedRoute requiredRole="ADMIN"><AdminAddEventPage /></ProtectedRoute>} />
                 </Routes>
               </main>
             </div>

@@ -55,8 +55,8 @@ public class SearchService {
                 .collect(Collectors.toList());
         response.setExtractedKeywords(keywords);
 
-        // 5. Query Database
-        List<Event> allEvents = eventRepository.findAll();
+        // 5. Query Database (Approved events only)
+        List<Event> allEvents = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
         String finalCategory = category;
         String finalLocation = location;
 

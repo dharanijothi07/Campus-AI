@@ -44,11 +44,37 @@ export const EventCard = ({ event, onRegisterSuccess }) => {
       <div className="absolute -top-12 -right-12 w-32 h-32 bg-cyan-500/5 rounded-full blur-2xl group-hover:bg-cyan-500/15 transition-all pointer-events-none" />
 
       <div>
+        {/* Event Banner Image if present */}
+        {event.imageUrl && (
+          <div className="w-full h-36 rounded-xl overflow-hidden mb-3.5 bg-gray-900 relative">
+            <img
+              src={event.imageUrl}
+              alt={event.title}
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.style.display = 'none';
+              }}
+            />
+            <div className="absolute inset-0 bg-gradient-to-t from-gray-950/80 via-transparent to-transparent pointer-events-none" />
+            <span className="absolute bottom-2 left-2 px-2 py-0.5 rounded-md text-[10px] font-bold bg-black/70 backdrop-blur-md text-cyan-300 border border-white/10">
+              {event.locationMode || 'Online'}
+            </span>
+          </div>
+        )}
+
         {/* Header Badges */}
         <div className="flex items-center justify-between gap-2 mb-3">
-          <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getCategoryColor(event.categoryName)}`}>
-            {event.categoryName}
-          </span>
+          <div className="flex items-center gap-1.5 flex-wrap">
+            <span className={`px-2.5 py-1 rounded-full text-xs font-semibold border ${getCategoryColor(event.categoryName)}`}>
+              {event.categoryName}
+            </span>
+            {!event.imageUrl && event.locationMode && (
+              <span className="px-2 py-0.5 rounded-md text-[10px] font-semibold bg-gray-800 text-gray-300 border border-gray-700">
+                {event.locationMode}
+              </span>
+            )}
+          </div>
 
           <div className="flex items-center gap-1.5">
             {event.aiMatchPercentage && (

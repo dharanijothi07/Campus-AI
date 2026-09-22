@@ -72,12 +72,29 @@ const MOCK_EVENTS = [
 ];
 
 export const eventService = {
-  getAllEvents: async () => {
+  getAllEvents: async (approvedOnly = true) => {
     try {
-      const res = await api.get('/events');
+      const res = await api.get(`/events?approvedOnly=${approvedOnly}`);
       return res.data;
     } catch (e) {
+      if (approvedOnly) {
+        return MOCK_EVENTS.filter(evt => evt.isApproved !== false);
+      }
       return MOCK_EVENTS;
+    }
+  },
+
+  getAdminEvents: async () => {
+    try {
+      const res = await api.get('/admin/events');
+      return res.data;
+    } catch (e) {
+      try {
+        const res = await api.get('/events?approvedOnly=false');
+        return res.data;
+      } catch (err) {
+        return MOCK_EVENTS;
+      }
     }
   },
 
@@ -95,7 +112,7 @@ export const eventService = {
       const res = await api.get('/recommendations');
       return res.data;
     } catch (e) {
-      return MOCK_EVENTS;
+      return MOCK_EVENTS.filter(evt => evt.isApproved !== false);
     }
   },
 
@@ -109,10 +126,36 @@ export const eventService = {
         id: Date.now(),
         qualityScore: 88.0,
         isVerified: true,
-        organizerName: 'Organizer'
+        isApproved: eventData.isApproved !== undefined ? eventData.isApproved : true,
+        organizerName: eventData.organizerName || 'Organizer'
       };
       MOCK_EVENTS.push(newEvt);
       return newEvt;
+    }
+  },
+
+  createAdminEvent: async (eventData) => {
+    try {
+      const res = await api.post('/admin/events', eventData);
+      return res.data;
+    } catch (e) {
+      return eventService.createEvent(eventData);
+    }
+  },
+
+  toggleApproveEvent: async (id, approved = true) => {
+    try {
+      const res = await api.patch(`/admin/events/${id}/approve?approved=${approved}`);
+      return res.data;
+    } catch (e) {
+      try {
+        const res = await api.patch(`/events/${id}/approve?approved=${approved}`);
+        return res.data;
+      } catch (err) {
+        const found = MOCK_EVENTS.find(evt => evt.id === Number(id));
+        if (found) found.isApproved = approved;
+        return found || { id, isApproved: approved };
+      }
     }
   },
 

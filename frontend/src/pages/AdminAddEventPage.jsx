@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useParams, Link } from 'react-router-dom';
 import { eventService } from '../services/eventService';
 import {
   Sparkles,
@@ -18,6 +18,8 @@ import {
 
 export const AdminAddEventPage = () => {
   const navigate = useNavigate();
+  const { id } = useParams();
+  const isEditMode = Boolean(id);
 
   const [formData, setFormData] = useState({
     title: '',
@@ -38,6 +40,36 @@ export const AdminAddEventPage = () => {
   const [submitting, setSubmitting] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
+
+  useEffect(() => {
+    if (isEditMode) {
+      const fetchEvent = async () => {
+        try {
+          const data = await eventService.getEventById(id);
+          if (data) {
+            setFormData({
+              title: data.title || '',
+              organizerName: data.organizerName || '',
+              description: data.description || '',
+              categoryName: data.categoryName || 'Hackathon',
+              eventDate: data.eventDate ? data.eventDate.substring(0, 16) : '',
+              location: data.location || '',
+              locationMode: data.locationMode ? data.locationMode.toUpperCase() : 'ONLINE',
+              eligibility: data.eligibility || '',
+              deadline: data.deadline ? data.deadline.substring(0, 16) : '',
+              registrationLink: data.registrationLink || '',
+              imageUrl: data.imageUrl || '',
+              approvalStatus: data.approvalStatus ? data.approvalStatus.toUpperCase() : (data.isApproved ? 'APPROVED' : 'PENDING'),
+              isApproved: data.approvalStatus === 'APPROVED' || Boolean(data.isApproved)
+            });
+          }
+        } catch (err) {
+          setErrorMessage('Failed to load event data for editing.');
+        }
+      };
+      fetchEvent();
+    }
+  }, [id, isEditMode]);
 
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
@@ -88,13 +120,18 @@ export const AdminAddEventPage = () => {
 
     setSubmitting(true);
     try {
-      await eventService.createAdminEvent(formData);
-      setSuccessMessage('Genuine event added successfully!');
+      if (isEditMode) {
+        await eventService.updateAdminEvent(id, formData);
+        setSuccessMessage('Event updated successfully!');
+      } else {
+        await eventService.createAdminEvent(formData);
+        setSuccessMessage('Genuine event added successfully!');
+      }
       setTimeout(() => {
         navigate('/admin/events');
       }, 1200);
     } catch (err) {
-      setErrorMessage(err.response?.data?.message || err.message || 'Failed to add event.');
+      setErrorMessage(err.response?.data?.message || err.message || (isEditMode ? 'Failed to update event.' : 'Failed to add event.'));
     } finally {
       setSubmitting(false);
     }
@@ -120,12 +157,16 @@ export const AdminAddEventPage = () => {
       {/* Main Form Card */}
       <div className="glass-card p-6 lg:p-8 rounded-3xl border border-gray-800 space-y-6">
         <div>
-          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">Official Event Publishing</span>
+          <span className="text-xs font-bold text-cyan-400 uppercase tracking-wider">
+            {isEditMode ? 'Event Modification' : 'Official Event Publishing'}
+          </span>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-white mt-1">
-            Add Genuine Upcoming Event
+            {isEditMode ? 'Edit Event Details' : 'Add Genuine Upcoming Event'}
           </h1>
           <p className="text-xs text-gray-400 mt-1">
-            Enter official, verified event information collected from public organizer portals. Only approved events are presented to students.
+            {isEditMode
+              ? 'Update event timing, organizer details, registration links, or publication status.'
+              : 'Enter official, verified event information collected from public organizer portals. Only approved events are presented to students.'}
           </p>
         </div>
 
@@ -361,7 +402,13 @@ export const AdminAddEventPage = () => {
             disabled={submitting}
             className="w-full py-4 rounded-2xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-extrabold text-sm shadow-xl shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all"
           >
-            {submitting ? 'Saving Event to Database...' : 'Save & Publish Genuine Event'}{' '}
+            {submitting
+              ? isEditMode
+                ? 'Updating Event...'
+                : 'Saving Event to Database...'
+              : isEditMode
+              ? 'Save Event Changes'
+              : 'Save & Publish Genuine Event'}{' '}
             <ShieldCheck className="w-4 h-4" />
           </button>
         </form>

@@ -52,6 +52,7 @@ export function App() {
 
                   <Route path="/admin/events" element={<ProtectedRoute requiredRole="ADMIN"><AdminEventsPage /></ProtectedRoute>} />
                   <Route path="/admin/add-event" element={<ProtectedRoute requiredRole="ADMIN"><AdminAddEventPage /></ProtectedRoute>} />
+                  <Route path="/admin/edit-event/:id" element={<ProtectedRoute requiredRole="ADMIN"><AdminAddEventPage /></ProtectedRoute>} />
                 </Routes>
               </main>
             </div>

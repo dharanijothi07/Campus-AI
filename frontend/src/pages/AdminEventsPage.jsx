@@ -13,7 +13,8 @@ import {
   Globe,
   Tag,
   XCircle,
-  Trash2
+  Trash2,
+  Edit3
 } from 'lucide-react';
 
 export const AdminEventsPage = () => {
@@ -277,6 +278,14 @@ export const AdminEventsPage = () => {
                   >
                     <ExternalLink className="w-3.5 h-3.5" />
                   </a>
+
+                  <Link
+                    to={`/admin/edit-event/${evt.id}`}
+                    className="px-3 py-1.5 rounded-xl bg-gray-900 hover:bg-gray-800 text-purple-400 hover:text-purple-300 border border-gray-800 text-xs font-bold flex items-center gap-1 transition-colors"
+                    title="Edit Event"
+                  >
+                    <Edit3 className="w-3.5 h-3.5" /> Edit
+                  </Link>
 
                   <Link
                     to={`/events/${evt.id}`}

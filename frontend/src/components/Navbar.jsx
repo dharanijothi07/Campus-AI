@@ -23,11 +23,11 @@ export const Navbar = () => {
             </div>
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-tight text-white flex items-center gap-1.5">
-              Opportunity<span className="gradient-text">Hub</span>
+            <span className="font-extrabold text-xl tracking-wider text-white flex items-center gap-1.5">
+              CAMPUS <span className="gradient-text">AI</span>
             </span>
             <span className="text-[10px] text-cyan-400 font-semibold tracking-wider block uppercase -mt-1">
-              AI Opportunity Ecosystem
+              AI Student Opportunity Ecosystem
             </span>
           </div>
         </Link>

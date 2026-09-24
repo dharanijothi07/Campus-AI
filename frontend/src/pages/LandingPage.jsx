@@ -19,7 +19,7 @@ export const LandingPage = () => {
       <section className="relative pt-16 lg:pt-24 px-4 lg:px-8 max-w-7xl mx-auto text-center">
         <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-cyan-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-bold mb-6 ai-glow">
           <Sparkles className="w-4 h-4 text-cyan-400" />
-          <span>Next-Gen Student Opportunity Ecosystem</span>
+          <span>CAMPUS AI — Next-Gen Student Opportunity Platform</span>
         </div>
 
         <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight leading-tight max-w-5xl mx-auto">
@@ -92,7 +92,7 @@ export const LandingPage = () => {
       <section className="max-w-7xl mx-auto px-4 lg:px-8">
         <div className="text-center max-w-3xl mx-auto mb-12">
           <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">
-            Why Students & Organizers Choose <span className="gradient-text">Opportunity Hub</span>
+            Why Students & Organizers Choose <span className="gradient-text">CAMPUS AI</span>
           </h2>
           <p className="text-sm text-gray-400">
             Built specifically to solve college event discovery fragmentations, fake listings, and registration drop-offs.

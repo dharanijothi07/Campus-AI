@@ -35,7 +35,7 @@ export const aiService = {
       return res.data;
     } catch (e) {
       const q = query.toLowerCase();
-      let responseText = "Welcome to AI Opportunity Hub! I can help you find suitable hackathons, check eligibility, search for paid internships, and monitor registration deadlines.";
+      let responseText = "Welcome to CAMPUS AI! I can help you find suitable hackathons, check eligibility, search for paid internships, and monitor registration deadlines.";
       
       if (q.includes('hackathon')) {
         responseText = "We found several active hackathons! AI Horizon National Hackathon is coming up on Oct 15 with a 95% AI profile match for CSE students.";
@@ -72,7 +72,7 @@ export const aiService = {
       return res.data;
     } catch (e) {
       return {
-        generatedContent: `🚀 Big News! Registrations are officially open for ${req.title || 'our upcoming event'}!\n\n${req.description || 'Build innovative solutions and accelerate your tech career.'}\n\n👉 Platform: ${req.platform || 'LinkedIn'}\n📍 Don't miss out - register now: https://opportunityhub.dev #TechEvent #StudentOpportunities #Hackathon #CareerGrowth`
+        generatedContent: `🚀 Big News! Registrations are officially open for ${req.title || 'our upcoming event'}!\n\n${req.description || 'Build innovative solutions and accelerate your tech career.'}\n\n👉 Platform: ${req.platform || 'LinkedIn'}\n📍 Don't miss out - register now: https://campusai.dev #TechEvent #StudentOpportunities #Hackathon #CareerGrowth`
       };
     }
   }

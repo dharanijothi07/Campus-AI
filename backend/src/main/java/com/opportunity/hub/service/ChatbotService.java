@@ -95,8 +95,8 @@ public class ChatbotService {
             suggestedEvents = allEvents.stream().limit(3).map(e -> eventService.mapToResponse(e, finalProfile)).collect(Collectors.toList());
         } else {
             // Use general AI service
-            String aiAnswer = aiService.generateText("You are an AI assistant for the AI Student Opportunity Ecosystem. Answer this student query concisely: " + query);
-            replyText = aiAnswer != null ? aiAnswer : "Welcome to Opportunity Hub! You can ask me about hackathons, workshops, internships, deadlines, and eligibility.";
+            String aiAnswer = aiService.generateText("You are an AI assistant for the CAMPUS AI Student Opportunity Ecosystem. Answer this student query concisely: " + query);
+            replyText = aiAnswer != null ? aiAnswer : "Welcome to CAMPUS AI! You can ask me about hackathons, workshops, internships, deadlines, and eligibility.";
             suggestedEvents = allEvents.stream().limit(2).map(e -> eventService.mapToResponse(e, finalProfile)).collect(Collectors.toList());
         }
 

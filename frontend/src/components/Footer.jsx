@@ -8,10 +8,10 @@ export const Footer = () => {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-cyan-400" />
-            <span className="font-extrabold text-lg text-white">AI Opportunity Hub</span>
+            <span className="font-extrabold text-lg text-white">CAMPUS AI</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
-            AI-powered student opportunity ecosystem designed to scale event discovery, recommendations, credibility verification, and participation for 1 million students.
+            AI-powered student opportunity ecosystem designed to scale event discovery, recommendations, credibility verification, and participation for students.
           </p>
         </div>
 
@@ -36,19 +36,19 @@ export const Footer = () => {
         </div>
 
         <div>
-          <h4 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-3">Hackathon Info</h4>
+          <h4 className="text-xs font-bold text-gray-200 uppercase tracking-wider mb-3">Platform Architecture</h4>
           <p className="text-xs text-gray-400 leading-relaxed">
             Built with Spring Boot, JWT, React.js, MySQL, and Gemini / OpenAI API integration. Production-ready full stack implementation.
           </p>
           <div className="flex items-center gap-3 mt-4 text-gray-400">
             <a href="https://github.com" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors"><Github className="w-5 h-5" /></a>
-            <a href="https://opportunityhub.dev" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors"><Globe className="w-5 h-5" /></a>
+            <a href="https://campusai.dev" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors"><Globe className="w-5 h-5" /></a>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto pt-6 border-t border-gray-900 flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
-        <p>© 2026 AI Student Opportunity Ecosystem. All rights reserved.</p>
+        <p>© 2026 CAMPUS AI. All rights reserved.</p>
         <div className="flex gap-4 mt-2 sm:mt-0">
           <span className="hover:text-gray-400 cursor-pointer">Privacy Policy</span>
           <span className="hover:text-gray-400 cursor-pointer">Terms of Service</span>

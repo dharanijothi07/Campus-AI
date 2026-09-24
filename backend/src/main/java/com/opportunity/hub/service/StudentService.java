@@ -67,7 +67,7 @@ public class StudentService {
                 "Hackathons, AI/ML, Internships",
                 "Chennai",
                 "Software Engineer",
-                "Registered on AI Opportunity Hub"
+                "Registered on CAMPUS AI"
         );
         p.setCollege("Anna University / College of Engineering Guindy");
         p.setYearOfStudy(3);

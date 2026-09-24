@@ -1,6 +1,6 @@
-# AI Opportunity Hub - Frontend (React.js)
+# CAMPUS AI - Frontend (React.js)
 
-The React.js single-page frontend application for the **AI-Powered Student Opportunity Ecosystem**.
+The React.js single-page frontend application for the **CAMPUS AI - Student Opportunity Ecosystem**.
 
 ## Features
 - Modern hackathon-level Dark Navy UI with glowing cyan/blue AI accents.

@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Component
 public class DatabaseSeeder implements CommandLineRunner {
@@ -61,13 +62,8 @@ public class DatabaseSeeder implements CommandLineRunner {
         EventCategory internshipCat = getOrCreateCategory("Internship", "Practical career opportunities for undergraduate and postgraduate students");
         EventCategory competitionCat = getOrCreateCategory("Competition", "Skill-based competitive events, algorithms, and project showcases");
 
-        // 3. Only seed initial genuine events if events table is empty
-        if (eventRepository.count() > 0) {
-            log.info("Events table already contains {} events. Skipping initial seeder.", eventRepository.count());
-            return;
-        }
-
-        log.info("Seeding initial dataset of 12 genuine upcoming student opportunities (marked as PENDING)...");
+        // 3. Seed or update initial genuine events (APPROVED for development/demo testing)
+        log.info("Checking initial dataset of 12 genuine upcoming student opportunities...");
 
         List<EventSeedData> seeds = Arrays.asList(
                 new EventSeedData(
@@ -252,44 +248,93 @@ public class DatabaseSeeder implements CommandLineRunner {
                 )
         );
 
+        int newlyCreated = 0;
+        int updatedCount = 0;
+
         for (EventSeedData seed : seeds) {
-            Event event = new Event();
-            event.setOrganizer(adminUser);
-            event.setCategory(seed.category);
-            event.setCategoryName(seed.category.getName());
-            event.setTitle(seed.title);
-            event.setOrganizerName(seed.organizerName);
-            event.setDescription(seed.description);
-            event.setLocation(seed.location);
-            event.setLocationMode(seed.locationMode);
-            event.setEventDate(seed.eventDate);
-            event.setDeadline(seed.deadline);
-            event.setEligibility(seed.eligibility);
-            event.setSkillsRequired(seed.skillsRequired);
-            event.setRegistrationLink(seed.registrationLink);
-            event.setImageUrl(seed.imageUrl);
-            event.setDepartmentTarget("Computer Science & Engineering");
-            // Requirement: Mark these imported events as PENDING so an ADMIN can review and approve them
-            event.setApprovalStatus("PENDING");
-            event.setIsApproved(false);
-            event.setQualityScore(seed.qualityScore);
-            event.setIsVerified(true);
+            Optional<Event> existingOpt = eventRepository.findFirstByTitle(seed.title);
+            if (existingOpt.isPresent()) {
+                Event existing = existingOpt.get();
+                boolean updated = false;
 
-            Event savedEvent = eventRepository.save(event);
+                // Requirement: Update the seeded 12 demo events so that they are APPROVED and visible to students
+                if (!"APPROVED".equalsIgnoreCase(existing.getApprovalStatus())) {
+                    existing.setApprovalStatus("APPROVED");
+                    updated = true;
+                }
+                if (!Boolean.TRUE.equals(existing.getIsApproved())) {
+                    existing.setIsApproved(true);
+                    updated = true;
+                }
+                if (existing.getOrganizerName() == null && seed.organizerName != null) {
+                    existing.setOrganizerName(seed.organizerName);
+                    updated = true;
+                }
+                if (existing.getLocationMode() == null && seed.locationMode != null) {
+                    existing.setLocationMode(seed.locationMode);
+                    updated = true;
+                }
+                if (existing.getImageUrl() == null && seed.imageUrl != null) {
+                    existing.setImageUrl(seed.imageUrl);
+                    updated = true;
+                }
+                if (updated) {
+                    eventRepository.save(existing);
+                    updatedCount++;
+                }
 
-            EventVerification verification = new EventVerification();
-            verification.setEvent(savedEvent);
-            verification.setIsDuplicate(false);
-            verification.setIsSuspicious(false);
-            verification.setMissingInfo(false);
-            verification.setQualityScore(seed.qualityScore);
-            verification.setCredibilityScore(95.0);
-            verification.setVerificationSummary("Imported from verified public organizer portal. Status: PENDING review by Admin.");
-            verification.setStatus("PENDING_REVIEW");
-            verificationRepository.save(verification);
+                // Ensure verification record is VERIFIED
+                Optional<EventVerification> verOpt = verificationRepository.findByEventId(existing.getId());
+                if (verOpt.isPresent()) {
+                    EventVerification verification = verOpt.get();
+                    if (!"VERIFIED".equalsIgnoreCase(verification.getStatus())) {
+                        verification.setStatus("VERIFIED");
+                        verification.setVerificationSummary("Imported from verified public organizer portal. Status: APPROVED for demo/testing.");
+                        verificationRepository.save(verification);
+                    }
+                }
+            } else {
+                Event event = new Event();
+                event.setOrganizer(adminUser);
+                event.setCategory(seed.category);
+                event.setCategoryName(seed.category.getName());
+                event.setTitle(seed.title);
+                event.setOrganizerName(seed.organizerName);
+                event.setDescription(seed.description);
+                event.setLocation(seed.location);
+                event.setLocationMode(seed.locationMode);
+                event.setEventDate(seed.eventDate);
+                event.setDeadline(seed.deadline);
+                event.setEligibility(seed.eligibility);
+                event.setSkillsRequired(seed.skillsRequired);
+                event.setRegistrationLink(seed.registrationLink);
+                event.setImageUrl(seed.imageUrl);
+                event.setDepartmentTarget("Computer Science & Engineering");
+                // Requirement: Initial seeded demo events are APPROVED for development/demo testing
+                event.setApprovalStatus("APPROVED");
+                event.setIsApproved(true);
+                event.setQualityScore(seed.qualityScore);
+                event.setIsVerified(true);
+
+                Event savedEvent = eventRepository.save(event);
+
+                EventVerification verification = new EventVerification();
+                verification.setEvent(savedEvent);
+                verification.setIsDuplicate(false);
+                verification.setIsSuspicious(false);
+                verification.setMissingInfo(false);
+                verification.setQualityScore(seed.qualityScore);
+                verification.setCredibilityScore(95.0);
+                verification.setVerificationSummary("Imported from verified public organizer portal. Status: APPROVED for demo/testing.");
+                verification.setStatus("VERIFIED");
+                verificationRepository.save(verification);
+
+                newlyCreated++;
+            }
         }
 
-        log.info("Successfully seeded {} genuine upcoming opportunities marked as PENDING.", seeds.size());
+        log.info("DatabaseSeeder finished: {} new demo events seeded, {} existing demo events updated to APPROVED. Total checked: {}.",
+                newlyCreated, updatedCount, seeds.size());
     }
 
     private EventCategory getOrCreateCategory(String name, String description) {

@@ -17,8 +17,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800',
     qualityScore: 97.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 96.0
   },
   {
@@ -37,8 +37,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800',
     qualityScore: 98.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 94.5
   },
   {
@@ -57,8 +57,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800',
     qualityScore: 96.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 95.0
   },
   {
@@ -77,8 +77,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800',
     qualityScore: 95.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 93.0
   },
   {
@@ -97,8 +97,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800',
     qualityScore: 99.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 91.0
   },
   {
@@ -117,8 +117,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800',
     qualityScore: 91.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 89.0
   },
   {
@@ -137,8 +137,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800',
     qualityScore: 96.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 92.5
   },
   {
@@ -157,8 +157,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800',
     qualityScore: 97.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 97.0
   },
   {
@@ -177,8 +177,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800',
     qualityScore: 93.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 88.0
   },
   {
@@ -197,8 +197,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800',
     qualityScore: 94.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 90.0
   },
   {
@@ -217,8 +217,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800',
     qualityScore: 92.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 86.0
   },
   {
@@ -237,8 +237,8 @@ const MOCK_EVENTS = [
     imageUrl: 'https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800',
     qualityScore: 95.0,
     isVerified: true,
-    approvalStatus: 'PENDING',
-    isApproved: false,
+    approvalStatus: 'APPROVED',
+    isApproved: true,
     aiMatchPercentage: 94.0
   }
 ];
@@ -284,7 +284,7 @@ export const eventService = {
       const res = await api.get('/recommendations');
       return res.data;
     } catch (e) {
-      return MOCK_EVENTS.filter(evt => evt.isApproved !== false);
+      return MOCK_EVENTS.filter(evt => evt.approvalStatus === 'APPROVED' || (evt.isApproved === true && !evt.approvalStatus));
     }
   },
 
@@ -293,12 +293,14 @@ export const eventService = {
       const res = await api.post('/events', eventData);
       return res.data;
     } catch (e) {
+      const isExplicitlyApproved = Boolean(eventData.isApproved || eventData.approvalStatus === 'APPROVED');
       const newEvt = {
         ...eventData,
         id: Date.now(),
         qualityScore: 88.0,
         isVerified: true,
-        isApproved: eventData.isApproved !== undefined ? eventData.isApproved : true,
+        isApproved: isExplicitlyApproved,
+        approvalStatus: eventData.approvalStatus || (isExplicitlyApproved ? 'APPROVED' : 'PENDING'),
         organizerName: eventData.organizerName || 'Organizer'
       };
       MOCK_EVENTS.push(newEvt);

@@ -7,9 +7,15 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface EventRepository extends JpaRepository<Event, Long> {
+
+    Optional<Event> findFirstByTitle(String title);
+
+    @Query("SELECT e FROM Event e WHERE (e.approvalStatus = 'APPROVED' OR e.isApproved = true) ORDER BY e.eventDate ASC")
+    List<Event> findApprovedEvents();
 
     List<Event> findByApprovalStatusOrderByEventDateAsc(String approvalStatus);
 

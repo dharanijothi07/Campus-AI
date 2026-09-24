@@ -47,7 +47,7 @@ public class RecommendationService {
         }
 
         StudentProfile profile = profileOpt.get();
-        List<Event> allEvents = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
+        List<Event> allEvents = eventRepository.findApprovedEvents();
 
         List<EventDto.EventResponse> results = new ArrayList<>();
 

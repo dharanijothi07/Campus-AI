@@ -41,11 +41,7 @@ public class EventService {
     public List<EventDto.EventResponse> getAllEvents(Boolean approvedOnly) {
         List<Event> events;
         if (Boolean.TRUE.equals(approvedOnly)) {
-            events = eventRepository.findByApprovalStatusOrderByEventDateAsc("APPROVED");
-            if (events.isEmpty()) {
-                // Fallback in case existing records in database haven't run migration yet
-                events = eventRepository.findByIsApprovedTrueOrderByEventDateAsc();
-            }
+            events = eventRepository.findApprovedEvents();
         } else {
             events = eventRepository.findAll();
         }
@@ -95,6 +91,7 @@ public class EventService {
             initialStatus = "REJECTED";
         }
         event.setApprovalStatus(initialStatus);
+        event.setIsApproved("APPROVED".equalsIgnoreCase(initialStatus));
         
         event.setQualityScore(88.0);
         event.setIsVerified(true);
@@ -136,9 +133,12 @@ public class EventService {
         if (req.getImageUrl() != null) event.setImageUrl(req.getImageUrl());
         
         if (req.getApprovalStatus() != null) {
-            event.setApprovalStatus(req.getApprovalStatus().toUpperCase());
+            String status = req.getApprovalStatus().toUpperCase();
+            event.setApprovalStatus(status);
+            event.setIsApproved("APPROVED".equals(status));
         } else if (req.getIsApproved() != null) {
             event.setIsApproved(req.getIsApproved());
+            event.setApprovalStatus(Boolean.TRUE.equals(req.getIsApproved()) ? "APPROVED" : "PENDING");
         }
 
         Event saved = eventRepository.save(event);
@@ -150,6 +150,7 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
         event.setApprovalStatus("APPROVED");
+        event.setIsApproved(true);
         Event saved = eventRepository.save(event);
         return mapToResponse(saved);
     }
@@ -159,6 +160,7 @@ public class EventService {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
         event.setApprovalStatus("REJECTED");
+        event.setIsApproved(false);
         Event saved = eventRepository.save(event);
         return mapToResponse(saved);
     }

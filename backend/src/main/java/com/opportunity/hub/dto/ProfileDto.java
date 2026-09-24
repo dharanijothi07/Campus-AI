@@ -10,6 +10,12 @@ public class ProfileDto {
     private String interests;
     private String location;
     private String careerGoals;
+    private String college;
+    private Integer yearOfStudy;
+    private Double cgpa;
+    private String technicalSkills;
+    private String technicalInterests;
+    private String nonTechnicalInterests;
     private String previousActivities;
 
     public ProfileDto() {}
@@ -32,6 +38,18 @@ public class ProfileDto {
     public void setLocation(String location) { this.location = location; }
     public String getCareerGoals() { return careerGoals; }
     public void setCareerGoals(String careerGoals) { this.careerGoals = careerGoals; }
+    public String getCollege() { return college; }
+    public void setCollege(String college) { this.college = college; }
+    public Integer getYearOfStudy() { return yearOfStudy; }
+    public void setYearOfStudy(Integer yearOfStudy) { this.yearOfStudy = yearOfStudy; }
+    public Double getCgpa() { return cgpa; }
+    public void setCgpa(Double cgpa) { this.cgpa = cgpa; }
+    public String getTechnicalSkills() { return technicalSkills != null ? technicalSkills : skills; }
+    public void setTechnicalSkills(String technicalSkills) { this.technicalSkills = technicalSkills; }
+    public String getTechnicalInterests() { return technicalInterests != null ? technicalInterests : interests; }
+    public void setTechnicalInterests(String technicalInterests) { this.technicalInterests = technicalInterests; }
+    public String getNonTechnicalInterests() { return nonTechnicalInterests; }
+    public void setNonTechnicalInterests(String nonTechnicalInterests) { this.nonTechnicalInterests = nonTechnicalInterests; }
     public String getPreviousActivities() { return previousActivities; }
     public void setPreviousActivities(String previousActivities) { this.previousActivities = previousActivities; }
 }

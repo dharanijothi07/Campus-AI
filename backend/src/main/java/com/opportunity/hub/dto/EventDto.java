@@ -20,6 +20,10 @@ public class EventDto {
         private String imageUrl;
         private String approvalStatus; // PENDING, APPROVED, REJECTED
         private Boolean isApproved;
+        private String eligibleYears; // e.g. "1,2,3,4" or "3,4" or "ALL"
+        private Double minCgpa;
+        private String eligibleColleges;
+        private String mandatorySkills;
 
         public EventRequest() {}
 
@@ -53,6 +57,14 @@ public class EventDto {
         public void setApprovalStatus(String approvalStatus) { this.approvalStatus = approvalStatus; }
         public Boolean getIsApproved() { return isApproved; }
         public void setIsApproved(Boolean isApproved) { this.isApproved = isApproved; }
+        public String getEligibleYears() { return eligibleYears != null ? eligibleYears : "ALL"; }
+        public void setEligibleYears(String eligibleYears) { this.eligibleYears = eligibleYears; }
+        public Double getMinCgpa() { return minCgpa != null ? minCgpa : 0.0; }
+        public void setMinCgpa(Double minCgpa) { this.minCgpa = minCgpa; }
+        public String getEligibleColleges() { return eligibleColleges != null ? eligibleColleges : "ALL"; }
+        public void setEligibleColleges(String eligibleColleges) { this.eligibleColleges = eligibleColleges; }
+        public String getMandatorySkills() { return mandatorySkills; }
+        public void setMandatorySkills(String mandatorySkills) { this.mandatorySkills = mandatorySkills; }
     }
 
     public static class EventResponse {
@@ -75,6 +87,11 @@ public class EventDto {
         private Double qualityScore;
         private Boolean isVerified;
         private Double aiMatchPercentage; // Optional match score for student view
+        private String eligibleYears;
+        private Double minCgpa;
+        private String eligibleColleges;
+        private String mandatorySkills;
+        private EligibilityMatchDto eligibilityMatch;
 
         public EventResponse() {}
 
@@ -116,5 +133,15 @@ public class EventDto {
         public void setIsVerified(Boolean isVerified) { this.isVerified = isVerified; }
         public Double getAiMatchPercentage() { return aiMatchPercentage; }
         public void setAiMatchPercentage(Double aiMatchPercentage) { this.aiMatchPercentage = aiMatchPercentage; }
+        public String getEligibleYears() { return eligibleYears != null ? eligibleYears : "ALL"; }
+        public void setEligibleYears(String eligibleYears) { this.eligibleYears = eligibleYears; }
+        public Double getMinCgpa() { return minCgpa != null ? minCgpa : 0.0; }
+        public void setMinCgpa(Double minCgpa) { this.minCgpa = minCgpa; }
+        public String getEligibleColleges() { return eligibleColleges != null ? eligibleColleges : "ALL"; }
+        public void setEligibleColleges(String eligibleColleges) { this.eligibleColleges = eligibleColleges; }
+        public String getMandatorySkills() { return mandatorySkills; }
+        public void setMandatorySkills(String mandatorySkills) { this.mandatorySkills = mandatorySkills; }
+        public EligibilityMatchDto getEligibilityMatch() { return eligibilityMatch; }
+        public void setEligibilityMatch(EligibilityMatchDto eligibilityMatch) { this.eligibilityMatch = eligibilityMatch; }
     }
 }

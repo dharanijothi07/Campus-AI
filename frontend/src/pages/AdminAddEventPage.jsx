@@ -30,6 +30,12 @@ export const AdminAddEventPage = () => {
     location: '',
     locationMode: 'ONLINE', // ONLINE, OFFLINE, HYBRID
     eligibility: '',
+    departmentTarget: 'Computer Science & Engineering',
+    skillsRequired: '',
+    eligibleYears: '1st Year, 2nd Year, 3rd Year, 4th Year',
+    minCgpa: 6.0,
+    eligibleColleges: 'All Colleges',
+    mandatorySkills: '',
     deadline: '',
     registrationLink: '',
     imageUrl: '',
@@ -56,6 +62,12 @@ export const AdminAddEventPage = () => {
               location: data.location || '',
               locationMode: data.locationMode ? data.locationMode.toUpperCase() : 'ONLINE',
               eligibility: data.eligibility || '',
+              departmentTarget: data.departmentTarget || 'Computer Science & Engineering',
+              skillsRequired: data.skillsRequired || '',
+              eligibleYears: data.eligibleYears || '1st Year, 2nd Year, 3rd Year, 4th Year',
+              minCgpa: data.minCgpa != null ? data.minCgpa : 0.0,
+              eligibleColleges: data.eligibleColleges || 'All Colleges',
+              mandatorySkills: data.mandatorySkills || '',
               deadline: data.deadline ? data.deadline.substring(0, 16) : '',
               registrationLink: data.registrationLink || '',
               imageUrl: data.imageUrl || '',
@@ -312,17 +324,118 @@ export const AdminAddEventPage = () => {
             />
           </div>
 
-          {/* 8. Eligibility */}
+          {/* 8. Freeform Eligibility */}
           <div>
-            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligibility Criteria</label>
+            <label className="block text-xs font-semibold text-gray-300 mb-1.5">Freeform Eligibility & Prerequisites</label>
             <input
               type="text"
               name="eligibility"
               value={formData.eligibility}
               onChange={handleChange}
-              placeholder="e.g. All enrolled college undergraduates and postgraduates across India"
+              placeholder="e.g. Bona fide undergraduate and postgraduate engineering students across India in teams of 6"
               className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"
             />
+          </div>
+
+          {/* AI Structured Eligibility & Opportunity Matching Gates */}
+          <div className="p-5 rounded-2xl bg-gray-950/80 border border-cyan-500/20 space-y-4">
+            <div className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-cyan-400" />
+              <h3 className="text-xs font-extrabold text-cyan-400 uppercase tracking-wider">
+                AI Eligibility Rules & Match Parameters
+              </h3>
+            </div>
+            <p className="text-[11px] text-gray-400 leading-relaxed">
+              Define the hard gates and criteria evaluated by the student eligibility engine. Students who satisfy all hard gates receive full eligibility.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              {/* Target Departments */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Target Department(s)</label>
+                <input
+                  type="text"
+                  name="departmentTarget"
+                  value={formData.departmentTarget}
+                  onChange={handleChange}
+                  placeholder="e.g. Computer Science & Engineering, Information Technology or All Departments"
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
+              </div>
+
+              {/* Eligible Years */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Years of Study</label>
+                <input
+                  type="text"
+                  name="eligibleYears"
+                  value={formData.eligibleYears}
+                  onChange={handleChange}
+                  placeholder="e.g. 2nd Year, 3rd Year, 4th Year or All Years"
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
+              </div>
+
+              {/* Minimum CGPA */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Minimum Required CGPA (0.0 - 10.0)</label>
+                <input
+                  type="number"
+                  step="0.1"
+                  min="0.0"
+                  max="10.0"
+                  name="minCgpa"
+                  value={formData.minCgpa}
+                  onChange={handleChange}
+                  placeholder="e.g. 6.5 (0 = No CGPA gate)"
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
+              </div>
+
+              {/* Eligible Colleges */}
+              <div>
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">Eligible Colleges / Universities</label>
+                <input
+                  type="text"
+                  name="eligibleColleges"
+                  value={formData.eligibleColleges}
+                  onChange={handleChange}
+                  placeholder="e.g. All Colleges or Anna University, IIT Madras"
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
+              </div>
+
+              {/* Mandatory Skills */}
+              <div className="col-span-1 sm:col-span-2">
+                <label className="block text-xs font-semibold text-amber-400 mb-1.5 flex items-center gap-1.5">
+                  <Tag className="w-3.5 h-3.5" /> Mandatory Hard-Requirement Skills (Comma-separated)
+                </label>
+                <input
+                  type="text"
+                  name="mandatorySkills"
+                  value={formData.mandatorySkills}
+                  onChange={handleChange}
+                  placeholder="e.g. Python, React (failing these marks student Not Fully Eligible)"
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-amber-400 transition-colors"
+                />
+                <span className="text-[10px] text-gray-500 mt-1 block">
+                  Students missing any mandatory skill are flagged with a specific gap alert (e.g. ✗ Required skill: React).
+                </span>
+              </div>
+
+              {/* Recommended Skills */}
+              <div className="col-span-1 sm:col-span-2">
+                <label className="block text-xs font-semibold text-gray-300 mb-1.5">General Recommended Skills (Comma-separated)</label>
+                <input
+                  type="text"
+                  name="skillsRequired"
+                  value={formData.skillsRequired}
+                  onChange={handleChange}
+                  placeholder="e.g. IoT, Embedded Systems, Python, React, AI, Cloud Computing"
+                  className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 transition-colors"
+                />
+              </div>
+            </div>
           </div>
 
           {/* 10. Official Registration URL */}

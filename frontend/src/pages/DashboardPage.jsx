@@ -35,7 +35,15 @@ export const DashboardPage = () => {
     fetchData();
   }, []);
 
+  const [eligibilityFilter, setEligibilityFilter] = useState('ALL'); // 'ALL' or 'ELIGIBLE'
+
+  const eligibleCount = events.filter(e => e.eligibilityMatch ? e.eligibilityMatch.isEligible : true).length;
+
   const filteredEvents = events.filter(e => {
+    if (eligibilityFilter === 'ELIGIBLE') {
+      const isEligible = e.eligibilityMatch ? e.eligibilityMatch.isEligible : true;
+      if (!isEligible) return false;
+    }
     if (activeCategory === 'ALL') return true;
     return (e.categoryName || '').toUpperCase() === activeCategory;
   });
@@ -101,16 +109,51 @@ export const DashboardPage = () => {
             </div>
           </div>
 
-          {/* Category Filter Chips */}
+          {/* Discovery & Eligibility Tabs */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between flex-wrap gap-2">
-              <h2 className="text-xl font-bold text-white">Discover Opportunities</h2>
-              <div className="flex items-center gap-1.5 bg-gray-900/80 p-1 rounded-xl border border-gray-800 overflow-x-auto">
+            {/* Master Eligibility Toggle Bar */}
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 p-2 rounded-2xl bg-gray-900/60 border border-gray-800">
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => setEligibilityFilter('ALL')}
+                  className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 ${
+                    eligibilityFilter === 'ALL'
+                      ? 'bg-cyan-500 text-black shadow-md shadow-cyan-500/20'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-850'
+                  }`}
+                >
+                  All Approved Events
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] ${
+                    eligibilityFilter === 'ALL' ? 'bg-black/20 text-black' : 'bg-gray-800 text-gray-400'
+                  }`}>
+                    {events.length}
+                  </span>
+                </button>
+
+                <button
+                  onClick={() => setEligibilityFilter('ELIGIBLE')}
+                  className={`px-4 py-2 rounded-xl text-xs font-extrabold transition-all flex items-center gap-2 ${
+                    eligibilityFilter === 'ELIGIBLE'
+                      ? 'bg-emerald-500 text-black shadow-md shadow-emerald-500/20'
+                      : 'text-gray-400 hover:text-white hover:bg-gray-850'
+                  }`}
+                >
+                  Eligible Only ✓
+                  <span className={`px-2 py-0.5 rounded-full text-[10px] ${
+                    eligibilityFilter === 'ELIGIBLE' ? 'bg-black/20 text-black' : 'bg-emerald-500/10 text-emerald-400'
+                  }`}>
+                    {eligibleCount}
+                  </span>
+                </button>
+              </div>
+
+              {/* Category Filter Chips */}
+              <div className="flex items-center gap-1.5 bg-gray-950 p-1 rounded-xl border border-gray-850 overflow-x-auto">
                 {['ALL', 'HACKATHON', 'WORKSHOP', 'INTERNSHIP', 'COMPETITION'].map(cat => (
                   <button
                     key={cat}
                     onClick={() => setActiveCategory(cat)}
-                    className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
+                    className={`px-3 py-1 rounded-lg text-xs font-bold transition-all whitespace-nowrap ${
                       activeCategory === cat
                         ? 'bg-cyan-500/20 text-cyan-300 border border-cyan-500/40 shadow-sm'
                         : 'text-gray-400 hover:text-white'
@@ -123,11 +166,31 @@ export const DashboardPage = () => {
             </div>
 
             {/* Events Grid */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {filteredEvents.map(event => (
-                <EventCard key={event.id} event={event} />
-              ))}
-            </div>
+            {filteredEvents.length === 0 ? (
+              <div className="glass-card p-10 rounded-2xl border border-gray-800 text-center space-y-3">
+                <Sparkles className="w-8 h-8 text-cyan-400 mx-auto opacity-60" />
+                <h3 className="text-sm font-bold text-white">No Matching Opportunities</h3>
+                <p className="text-xs text-gray-400 max-w-md mx-auto">
+                  {eligibilityFilter === 'ELIGIBLE'
+                    ? 'No events match all your hard eligibility criteria in this category. Switch to "All Approved Events" or update your profile.'
+                    : 'No opportunities found in this category.'}
+                </p>
+                {eligibilityFilter === 'ELIGIBLE' && (
+                  <button
+                    onClick={() => setEligibilityFilter('ALL')}
+                    className="px-4 py-2 rounded-xl bg-gray-800 text-cyan-300 text-xs font-semibold hover:bg-gray-700"
+                  >
+                    View All Approved Events
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                {filteredEvents.map(event => (
+                  <EventCard key={event.id} event={event} />
+                ))}
+              </div>
+            )}
           </div>
         </div>
 

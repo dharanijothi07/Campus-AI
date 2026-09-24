@@ -1,19 +1,23 @@
 package com.opportunity.hub.service;
 
+import com.opportunity.hub.dto.EligibilityMatchDto;
 import com.opportunity.hub.dto.EventDto;
 import com.opportunity.hub.model.Event;
 import com.opportunity.hub.model.EventCategory;
 import com.opportunity.hub.model.EventVerification;
+import com.opportunity.hub.model.StudentProfile;
 import com.opportunity.hub.model.User;
 import com.opportunity.hub.repository.EventCategoryRepository;
 import com.opportunity.hub.repository.EventRepository;
 import com.opportunity.hub.repository.EventVerificationRepository;
+import com.opportunity.hub.repository.StudentProfileRepository;
 import com.opportunity.hub.repository.UserRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -23,37 +27,78 @@ public class EventService {
     private final EventCategoryRepository categoryRepository;
     private final UserRepository userRepository;
     private final EventVerificationRepository verificationRepository;
+    private final StudentProfileRepository profileRepository;
+    private final EligibilityMatchingService matchingService;
 
     public EventService(EventRepository eventRepository,
                         EventCategoryRepository categoryRepository,
                         UserRepository userRepository,
-                        EventVerificationRepository verificationRepository) {
+                        EventVerificationRepository verificationRepository,
+                        StudentProfileRepository profileRepository,
+                        EligibilityMatchingService matchingService) {
         this.eventRepository = eventRepository;
         this.categoryRepository = categoryRepository;
         this.userRepository = userRepository;
         this.verificationRepository = verificationRepository;
+        this.profileRepository = profileRepository;
+        this.matchingService = matchingService;
     }
 
     public List<EventDto.EventResponse> getAllEvents() {
-        return getAllEvents(true);
+        return getAllEvents(true, null, false);
     }
 
     public List<EventDto.EventResponse> getAllEvents(Boolean approvedOnly) {
+        return getAllEvents(approvedOnly, null, false);
+    }
+
+    public List<EventDto.EventResponse> getAllEvents(Boolean approvedOnly, String userEmail, Boolean eligibleOnly) {
         List<Event> events;
         if (Boolean.TRUE.equals(approvedOnly)) {
             events = eventRepository.findApprovedEvents();
         } else {
             events = eventRepository.findAll();
         }
-        return events.stream()
-                .map(this::mapToResponse)
+
+        StudentProfile profile = null;
+        if (userEmail != null) {
+            Optional<User> u = userRepository.findByEmail(userEmail);
+            if (u.isPresent()) {
+                profile = profileRepository.findByUserId(u.get().getId()).orElse(null);
+            }
+        }
+
+        final StudentProfile finalProfile = profile;
+        List<EventDto.EventResponse> responses = events.stream()
+                .map(e -> mapToResponse(e, finalProfile))
                 .collect(Collectors.toList());
+
+        if (Boolean.TRUE.equals(eligibleOnly)) {
+            return responses.stream()
+                    .filter(r -> r.getEligibilityMatch() != null && Boolean.TRUE.equals(r.getEligibilityMatch().getIsEligible()))
+                    .collect(Collectors.toList());
+        }
+
+        return responses;
     }
 
     public EventDto.EventResponse getEventById(Long id) {
+        return getEventById(id, null);
+    }
+
+    public EventDto.EventResponse getEventById(Long id, String userEmail) {
         Event event = eventRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Event not found with ID: " + id));
-        return mapToResponse(event);
+
+        StudentProfile profile = null;
+        if (userEmail != null) {
+            Optional<User> u = userRepository.findByEmail(userEmail);
+            if (u.isPresent()) {
+                profile = profileRepository.findByUserId(u.get().getId()).orElse(null);
+            }
+        }
+
+        return mapToResponse(event, profile);
     }
 
     @Transactional
@@ -82,6 +127,10 @@ public class EventService {
         // Location mode: ONLINE, OFFLINE, HYBRID
         event.setLocationMode(req.getLocationMode() != null ? req.getLocationMode().toUpperCase() : "OFFLINE");
         event.setImageUrl(req.getImageUrl());
+        if (req.getEligibleYears() != null) event.setEligibleYears(req.getEligibleYears());
+        if (req.getMinCgpa() != null) event.setMinCgpa(req.getMinCgpa());
+        if (req.getEligibleColleges() != null) event.setEligibleColleges(req.getEligibleColleges());
+        if (req.getMandatorySkills() != null) event.setMandatorySkills(req.getMandatorySkills());
         
         // Default to PENDING unless explicitly specified as APPROVED
         String initialStatus = "PENDING";
@@ -131,6 +180,10 @@ public class EventService {
         if (req.getOrganizerName() != null) event.setOrganizerName(req.getOrganizerName());
         if (req.getLocationMode() != null) event.setLocationMode(req.getLocationMode().toUpperCase());
         if (req.getImageUrl() != null) event.setImageUrl(req.getImageUrl());
+        if (req.getEligibleYears() != null) event.setEligibleYears(req.getEligibleYears());
+        if (req.getMinCgpa() != null) event.setMinCgpa(req.getMinCgpa());
+        if (req.getEligibleColleges() != null) event.setEligibleColleges(req.getEligibleColleges());
+        if (req.getMandatorySkills() != null) event.setMandatorySkills(req.getMandatorySkills());
         
         if (req.getApprovalStatus() != null) {
             String status = req.getApprovalStatus().toUpperCase();
@@ -179,6 +232,10 @@ public class EventService {
     }
 
     public EventDto.EventResponse mapToResponse(Event event) {
+        return mapToResponse(event, null);
+    }
+
+    public EventDto.EventResponse mapToResponse(Event event, StudentProfile profile) {
         EventDto.EventResponse res = new EventDto.EventResponse();
         res.setId(event.getId());
         res.setTitle(event.getTitle());
@@ -203,6 +260,17 @@ public class EventService {
         res.setIsApproved(event.getIsApproved());
         res.setQualityScore(event.getQualityScore());
         res.setIsVerified(event.getIsVerified());
+        res.setEligibleYears(event.getEligibleYears());
+        res.setMinCgpa(event.getMinCgpa());
+        res.setEligibleColleges(event.getEligibleColleges());
+        res.setMandatorySkills(event.getMandatorySkills());
+
+        if (profile != null) {
+            EligibilityMatchDto matchDto = matchingService.evaluateEligibility(profile, event);
+            res.setEligibilityMatch(matchDto);
+            res.setAiMatchPercentage(matchDto.getMatchPercentage());
+        }
+
         return res;
     }
 }

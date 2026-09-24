@@ -178,6 +178,137 @@ export const EventDetailsPage = () => {
         </div>
       </div>
 
+      {/* Dedicated AI Eligibility & Match Analysis Section */}
+      {event.eligibilityMatch && (
+        <div className="glass-card p-6 lg:p-8 rounded-3xl border border-cyan-500/30 relative overflow-hidden space-y-6 bg-gradient-to-b from-gray-900/90 to-gray-950/90 shadow-xl shadow-cyan-500/5">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-gray-800 pb-5">
+            <div>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cyan-500/10 text-cyan-400 text-xs font-bold mb-1.5 border border-cyan-500/30">
+                <Sparkles className="w-3.5 h-3.5" /> AI Eligibility & Match Analysis
+              </div>
+              <h2 className="text-xl sm:text-2xl font-extrabold text-white">Your Profile Compatibility Breakdown</h2>
+              <p className="text-xs text-gray-400 mt-1">
+                Deterministic rule-based analysis comparing your department, year of study, CGPA, mandatory skills, and career goals with event requirements.
+              </p>
+            </div>
+
+            <div className="flex items-center gap-3 shrink-0">
+              {/* Match Percentage Pill */}
+              <div className="text-right">
+                <span className="text-2xl font-black text-white">{event.eligibilityMatch.matchPercentage}%</span>
+                <span className="block text-[10px] text-gray-400 font-semibold uppercase">Match Score</span>
+              </div>
+
+              {/* Status Badge */}
+              {event.eligibilityMatch.status === 'ELIGIBLE' ? (
+                <div className="px-4 py-2 rounded-2xl bg-emerald-500/15 border border-emerald-500/30 text-emerald-400 text-xs font-extrabold flex items-center gap-1.5">
+                  <CheckCircle2 className="w-4 h-4" /> Eligible ✓
+                </div>
+              ) : event.eligibilityMatch.status === 'NOT_FULLY_ELIGIBLE' ? (
+                <div className="px-4 py-2 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-amber-400 text-xs font-extrabold flex items-center gap-1.5">
+                  <span>⚠️</span> Not Fully Eligible
+                </div>
+              ) : (
+                <div className="px-4 py-2 rounded-2xl bg-rose-500/15 border border-rose-500/30 text-rose-400 text-xs font-extrabold flex items-center gap-1.5">
+                  <span>❌</span> Not Eligible
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Match Score Meter */}
+          <div>
+            <div className="flex justify-between text-xs font-bold text-gray-300 mb-1.5">
+              <span>Overall Compatibility Score</span>
+              <span className="text-cyan-400">{event.eligibilityMatch.matchPercentage}% / 100%</span>
+            </div>
+            <div className="w-full h-3 bg-gray-850 rounded-full overflow-hidden p-0.5 border border-gray-800">
+              <div
+                className={`h-full rounded-full transition-all duration-700 ${
+                  event.eligibilityMatch.matchPercentage >= 80
+                    ? 'bg-gradient-to-r from-cyan-400 to-emerald-400'
+                    : event.eligibilityMatch.matchPercentage >= 50
+                    ? 'bg-gradient-to-r from-amber-400 to-cyan-400'
+                    : 'bg-gradient-to-r from-rose-500 to-amber-500'
+                }`}
+                style={{ width: `${Math.min(100, Math.max(5, event.eligibilityMatch.matchPercentage))}%` }}
+              />
+            </div>
+          </div>
+
+          {/* Two-Column Match & Gap Report */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            {/* Why You Match Column */}
+            <div className="p-4 rounded-2xl bg-emerald-500/5 border border-emerald-500/20 space-y-3">
+              <h3 className="text-xs font-bold text-emerald-400 uppercase tracking-wider flex items-center gap-1.5">
+                <CheckCircle2 className="w-4 h-4" /> Why You Match ({event.eligibilityMatch.matchReasons?.length || 0})
+              </h3>
+              <ul className="space-y-2">
+                {event.eligibilityMatch.matchReasons && event.eligibilityMatch.matchReasons.length > 0 ? (
+                  event.eligibilityMatch.matchReasons.map((reason, idx) => (
+                    <li key={idx} className="text-xs text-gray-300 flex items-start gap-2">
+                      <span className="text-emerald-400 font-bold shrink-0 mt-0.5">✓</span>
+                      <span>{reason.replace(/^✓\s*/, '')}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-xs text-gray-400 italic">No specific skill matches detected.</li>
+                )}
+              </ul>
+            </div>
+
+            {/* Gap Analysis / Missing Requirements Column */}
+            <div className={`p-4 rounded-2xl border space-y-3 ${
+              event.eligibilityMatch.missingRequirements && event.eligibilityMatch.missingRequirements.length > 0
+                ? 'bg-amber-500/5 border-amber-500/20'
+                : 'bg-gray-900/40 border-gray-800'
+            }`}>
+              <h3 className={`text-xs font-bold uppercase tracking-wider flex items-center gap-1.5 ${
+                event.eligibilityMatch.missingRequirements && event.eligibilityMatch.missingRequirements.length > 0
+                  ? 'text-amber-400'
+                  : 'text-gray-400'
+              }`}>
+                <span>⚠️</span> Missing Requirements & Gap Analysis
+              </h3>
+              <ul className="space-y-2">
+                {event.eligibilityMatch.missingRequirements && event.eligibilityMatch.missingRequirements.length > 0 ? (
+                  event.eligibilityMatch.missingRequirements.map((miss, idx) => (
+                    <li key={idx} className="text-xs text-amber-300 flex items-start gap-2">
+                      <span className="text-amber-400 font-bold shrink-0 mt-0.5">✗</span>
+                      <span>{miss.replace(/^✗\s*/, '')}</span>
+                    </li>
+                  ))
+                ) : (
+                  <li className="text-xs text-emerald-400 flex items-center gap-1.5 font-medium">
+                    <CheckCircle2 className="w-3.5 h-3.5" /> All hard eligibility criteria fully satisfied!
+                  </li>
+                )}
+              </ul>
+            </div>
+          </div>
+
+          {/* Structured Criteria Matrix Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs bg-gray-950/70 p-3.5 rounded-2xl border border-gray-850">
+            <div>
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">Eligible Years</span>
+              <span className="text-white font-semibold">{event.eligibleYears || 'All Years'}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">Minimum CGPA</span>
+              <span className="text-white font-semibold">{event.minCgpa ? `${event.minCgpa} / 10.0` : 'None required'}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">Eligible Colleges</span>
+              <span className="text-white font-semibold truncate block">{event.eligibleColleges || 'All Colleges'}</span>
+            </div>
+            <div>
+              <span className="text-gray-500 block text-[10px] uppercase font-bold">Mandatory Skills</span>
+              <span className="text-white font-semibold truncate block">{event.mandatorySkills || 'None required'}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Content Columns */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Event Details Left */}

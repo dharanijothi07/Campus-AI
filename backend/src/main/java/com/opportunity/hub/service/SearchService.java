@@ -3,7 +3,11 @@ package com.opportunity.hub.service;
 import com.opportunity.hub.dto.EventDto;
 import com.opportunity.hub.dto.SearchDtos;
 import com.opportunity.hub.model.Event;
+import com.opportunity.hub.model.StudentProfile;
+import com.opportunity.hub.model.User;
 import com.opportunity.hub.repository.EventRepository;
+import com.opportunity.hub.repository.StudentProfileRepository;
+import com.opportunity.hub.repository.UserRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,13 +18,24 @@ public class SearchService {
 
     private final EventRepository eventRepository;
     private final EventService eventService;
+    private final UserRepository userRepository;
+    private final StudentProfileRepository profileRepository;
 
-    public SearchService(EventRepository eventRepository, EventService eventService) {
+    public SearchService(EventRepository eventRepository,
+                         EventService eventService,
+                         UserRepository userRepository,
+                         StudentProfileRepository profileRepository) {
         this.eventRepository = eventRepository;
         this.eventService = eventService;
+        this.userRepository = userRepository;
+        this.profileRepository = profileRepository;
     }
 
     public SearchDtos.SearchResponse smartSearch(SearchDtos.SearchRequest req) {
+        return smartSearch(req, null);
+    }
+
+    public SearchDtos.SearchResponse smartSearch(SearchDtos.SearchRequest req, String userEmail) {
         String query = req.getQuery() != null ? req.getQuery().trim() : "";
         String lowerQuery = query.toLowerCase();
 
@@ -60,6 +75,15 @@ public class SearchService {
         String finalCategory = category;
         String finalLocation = location;
 
+        StudentProfile profile = null;
+        if (userEmail != null) {
+            Optional<User> u = userRepository.findByEmail(userEmail);
+            if (u.isPresent()) {
+                profile = profileRepository.findByUserId(u.get().getId()).orElse(null);
+            }
+        }
+        final StudentProfile finalProfile = profile;
+
         List<EventDto.EventResponse> filteredEvents = allEvents.stream()
                 .filter(e -> {
                     boolean catMatch = "All Categories".equals(finalCategory) || e.getCategoryName().equalsIgnoreCase(finalCategory);
@@ -73,7 +97,7 @@ public class SearchService {
 
                     return catMatch && (locMatch || keywordMatch);
                 })
-                .map(eventService::mapToResponse)
+                .map(e -> eventService.mapToResponse(e, finalProfile))
                 .collect(Collectors.toList());
 
         response.setEvents(filteredEvents);

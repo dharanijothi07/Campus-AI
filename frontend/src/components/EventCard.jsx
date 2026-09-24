@@ -76,8 +76,34 @@ export const EventCard = ({ event, onRegisterSuccess }) => {
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
-            {event.aiMatchPercentage && (
+          <div className="flex items-center gap-1.5 flex-wrap justify-end">
+            {/* AI Match & Eligibility Badges */}
+            {event.eligibilityMatch && (
+              <div className="flex items-center gap-1.5 flex-wrap">
+                {/* Match Percentage */}
+                <span className="px-2.5 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1 shadow-sm">
+                  <Sparkles className="w-3 h-3 text-cyan-400" />
+                  {event.eligibilityMatch.matchPercentage}% Match
+                </span>
+
+                {/* Eligibility Gate Badge */}
+                {event.eligibilityMatch.status === 'ELIGIBLE' ? (
+                  <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-emerald-500/15 text-emerald-400 border border-emerald-500/30 flex items-center gap-1">
+                    Eligible ✓
+                  </span>
+                ) : event.eligibilityMatch.status === 'NOT_FULLY_ELIGIBLE' ? (
+                  <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-amber-500/15 text-amber-400 border border-amber-500/30 flex items-center gap-1">
+                    Not Fully Eligible ⚠️
+                  </span>
+                ) : (
+                  <span className="px-2 py-0.5 rounded-lg text-[11px] font-bold bg-rose-500/15 text-rose-400 border border-rose-500/30 flex items-center gap-1">
+                    Not Eligible ❌
+                  </span>
+                )}
+              </div>
+            )}
+
+            {!event.eligibilityMatch && event.aiMatchPercentage && (
               <span className="px-2.5 py-1 rounded-full text-xs font-extrabold bg-gradient-to-r from-cyan-500/20 to-blue-500/20 text-cyan-300 border border-cyan-500/40 flex items-center gap-1 shadow-sm">
                 <Sparkles className="w-3 h-3 text-cyan-400" />
                 {event.aiMatchPercentage}% Match
@@ -99,9 +125,30 @@ export const EventCard = ({ event, onRegisterSuccess }) => {
         </Link>
 
         {/* Description Snippet */}
-        <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-4">
+        <p className="text-xs text-gray-400 line-clamp-2 leading-relaxed mb-3">
           {event.description}
         </p>
+
+        {/* AI Eligibility Insights Preview */}
+        {event.eligibilityMatch && (
+          <div className="mb-3 p-2.5 rounded-xl bg-gray-950/70 border border-gray-800/80 space-y-1 text-[11px]">
+            {/* Positive match preview */}
+            {event.eligibilityMatch.matchReasons && event.eligibilityMatch.matchReasons.slice(0, 2).map((reason, idx) => (
+              <div key={idx} className="flex items-center gap-1.5 text-emerald-400 truncate">
+                <span className="font-bold shrink-0">✓</span>
+                <span className="truncate text-gray-300">{reason.replace(/^✓\s*/, '')}</span>
+              </div>
+            ))}
+
+            {/* Missing requirement preview if not fully eligible */}
+            {event.eligibilityMatch.missingRequirements && event.eligibilityMatch.missingRequirements.slice(0, 1).map((miss, idx) => (
+              <div key={idx} className="flex items-center gap-1.5 text-amber-400 truncate font-medium">
+                <span className="font-bold shrink-0">✗</span>
+                <span className="truncate">{miss.replace(/^✗\s*/, '')}</span>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* Info Grid */}
         <div className="grid grid-cols-2 gap-2 text-xs text-gray-300 mb-4 bg-gray-900/50 p-2.5 rounded-xl border border-gray-800/60">

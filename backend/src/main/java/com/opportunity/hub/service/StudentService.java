@@ -44,9 +44,15 @@ public class StudentService {
 
         if (dto.getDepartment() != null) profile.setDepartment(dto.getDepartment());
         if (dto.getSkills() != null) profile.setSkills(dto.getSkills());
+        if (dto.getTechnicalSkills() != null) profile.setTechnicalSkills(dto.getTechnicalSkills());
         if (dto.getInterests() != null) profile.setInterests(dto.getInterests());
+        if (dto.getTechnicalInterests() != null) profile.setTechnicalInterests(dto.getTechnicalInterests());
+        if (dto.getNonTechnicalInterests() != null) profile.setNonTechnicalInterests(dto.getNonTechnicalInterests());
         if (dto.getLocation() != null) profile.setLocation(dto.getLocation());
         if (dto.getCareerGoals() != null) profile.setCareerGoals(dto.getCareerGoals());
+        if (dto.getCollege() != null) profile.setCollege(dto.getCollege());
+        if (dto.getYearOfStudy() != null) profile.setYearOfStudy(dto.getYearOfStudy());
+        if (dto.getCgpa() != null) profile.setCgpa(dto.getCgpa());
         if (dto.getPreviousActivities() != null) profile.setPreviousActivities(dto.getPreviousActivities());
 
         StudentProfile saved = profileRepository.save(profile);
@@ -63,6 +69,12 @@ public class StudentService {
                 "Software Engineer",
                 "Registered on AI Opportunity Hub"
         );
+        p.setCollege("Anna University / College of Engineering Guindy");
+        p.setYearOfStudy(3);
+        p.setCgpa(8.2);
+        p.setTechnicalSkills("React, Java, Python, Spring Boot, MySQL");
+        p.setTechnicalInterests("AI/ML, Generative AI, Cloud Architecture, Hackathons");
+        p.setNonTechnicalInterests("Product Pitching, Open Source Community, Team Leadership");
         return profileRepository.save(p);
     }
 
@@ -74,9 +86,15 @@ public class StudentService {
         dto.setEmail(profile.getUser().getEmail());
         dto.setDepartment(profile.getDepartment());
         dto.setSkills(profile.getSkills());
+        dto.setTechnicalSkills(profile.getTechnicalSkills());
         dto.setInterests(profile.getInterests());
+        dto.setTechnicalInterests(profile.getTechnicalInterests());
+        dto.setNonTechnicalInterests(profile.getNonTechnicalInterests());
         dto.setLocation(profile.getLocation());
         dto.setCareerGoals(profile.getCareerGoals());
+        dto.setCollege(profile.getCollege());
+        dto.setYearOfStudy(profile.getYearOfStudy());
+        dto.setCgpa(profile.getCgpa());
         dto.setPreviousActivities(profile.getPreviousActivities());
         return dto;
     }

@@ -30,6 +30,24 @@ public class StudentProfile {
     @Column(name = "career_goals", columnDefinition = "TEXT", nullable = false)
     private String careerGoals;
 
+    @Column(name = "college")
+    private String college = "Anna University / Campus Institute";
+
+    @Column(name = "year_of_study")
+    private Integer yearOfStudy = 3;
+
+    @Column(name = "cgpa")
+    private Double cgpa = 8.0;
+
+    @Column(name = "technical_skills", columnDefinition = "TEXT")
+    private String technicalSkills;
+
+    @Column(name = "technical_interests", columnDefinition = "TEXT")
+    private String technicalInterests;
+
+    @Column(name = "non_technical_interests", columnDefinition = "TEXT")
+    private String nonTechnicalInterests;
+
     @Column(name = "previous_activities", columnDefinition = "TEXT")
     private String previousActivities;
 
@@ -43,11 +61,17 @@ public class StudentProfile {
     protected void onCreate() {
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
+        if (this.technicalSkills == null || this.technicalSkills.isEmpty()) {
+            this.technicalSkills = this.skills;
+        }
     }
 
     @PreUpdate
     protected void onUpdate() {
         this.updatedAt = LocalDateTime.now();
+        if (this.technicalSkills == null || this.technicalSkills.isEmpty()) {
+            this.technicalSkills = this.skills;
+        }
     }
 
     public StudentProfile() {}
@@ -56,6 +80,7 @@ public class StudentProfile {
         this.user = user;
         this.department = department;
         this.skills = skills;
+        this.technicalSkills = skills;
         this.interests = interests;
         this.location = location;
         this.careerGoals = careerGoals;
@@ -72,10 +97,42 @@ public class StudentProfile {
     public void setDepartment(String department) { this.department = department; }
 
     public String getSkills() { return skills; }
-    public void setSkills(String skills) { this.skills = skills; }
+    public void setSkills(String skills) {
+        this.skills = skills;
+        if (this.technicalSkills == null || this.technicalSkills.isEmpty()) {
+            this.technicalSkills = skills;
+        }
+    }
+
+    public String getTechnicalSkills() {
+        return (technicalSkills != null && !technicalSkills.trim().isEmpty()) ? technicalSkills : skills;
+    }
+    public void setTechnicalSkills(String technicalSkills) {
+        this.technicalSkills = technicalSkills;
+        if (this.skills == null || this.skills.trim().isEmpty()) {
+            this.skills = technicalSkills;
+        }
+    }
 
     public String getInterests() { return interests; }
     public void setInterests(String interests) { this.interests = interests; }
+
+    public String getTechnicalInterests() {
+        return (technicalInterests != null && !technicalInterests.trim().isEmpty()) ? technicalInterests : interests;
+    }
+    public void setTechnicalInterests(String technicalInterests) { this.technicalInterests = technicalInterests; }
+
+    public String getNonTechnicalInterests() { return nonTechnicalInterests; }
+    public void setNonTechnicalInterests(String nonTechnicalInterests) { this.nonTechnicalInterests = nonTechnicalInterests; }
+
+    public String getCollege() { return college; }
+    public void setCollege(String college) { this.college = college; }
+
+    public Integer getYearOfStudy() { return yearOfStudy != null ? yearOfStudy : 3; }
+    public void setYearOfStudy(Integer yearOfStudy) { this.yearOfStudy = yearOfStudy; }
+
+    public Double getCgpa() { return cgpa != null ? cgpa : 8.0; }
+    public void setCgpa(Double cgpa) { this.cgpa = cgpa; }
 
     public String getLocation() { return location; }
     public void setLocation(String location) { this.location = location; }

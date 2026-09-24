@@ -4,9 +4,11 @@ import com.opportunity.hub.model.Event;
 import com.opportunity.hub.model.EventCategory;
 import com.opportunity.hub.model.EventVerification;
 import com.opportunity.hub.model.User;
+import com.opportunity.hub.model.StudentProfile;
 import com.opportunity.hub.repository.EventCategoryRepository;
 import com.opportunity.hub.repository.EventRepository;
 import com.opportunity.hub.repository.EventVerificationRepository;
+import com.opportunity.hub.repository.StudentProfileRepository;
 import com.opportunity.hub.repository.UserRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,17 +27,20 @@ public class DatabaseSeeder implements CommandLineRunner {
     private static final Logger log = LoggerFactory.getLogger(DatabaseSeeder.class);
 
     private final UserRepository userRepository;
+    private final StudentProfileRepository studentProfileRepository;
     private final EventRepository eventRepository;
     private final EventCategoryRepository categoryRepository;
     private final EventVerificationRepository verificationRepository;
     private final PasswordEncoder passwordEncoder;
 
     public DatabaseSeeder(UserRepository userRepository,
+                          StudentProfileRepository studentProfileRepository,
                           EventRepository eventRepository,
                           EventCategoryRepository categoryRepository,
                           EventVerificationRepository verificationRepository,
                           PasswordEncoder passwordEncoder) {
         this.userRepository = userRepository;
+        this.studentProfileRepository = studentProfileRepository;
         this.eventRepository = eventRepository;
         this.categoryRepository = categoryRepository;
         this.verificationRepository = verificationRepository;
@@ -56,14 +61,59 @@ public class DatabaseSeeder implements CommandLineRunner {
             return userRepository.save(admin);
         });
 
-        // 2. Ensure standard categories exist
+        // 2. Ensure default Student user exists for demo testing
+        User studentUser = userRepository.findByEmail("student@campusai.dev").orElseGet(() -> {
+            User student = new User(
+                    "student@campusai.dev",
+                    passwordEncoder.encode("studentPassword123!"),
+                    "Rahul Sharma",
+                    "STUDENT"
+            );
+            log.info("Created default Student user: student@campusai.dev");
+            return userRepository.save(student);
+        });
+
+        // Ensure rich profile for studentUser
+        studentProfileRepository.findByUserId(studentUser.getId()).ifPresentOrElse(profile -> {
+            if (profile.getCollege() == null || profile.getCollege().isEmpty()) {
+                profile.setCollege("Anna University");
+                profile.setYearOfStudy(3);
+                profile.setCgpa(8.4);
+                profile.setDepartment("Computer Science & Engineering");
+                profile.setLocation("Chennai");
+                profile.setTechnicalSkills("React, Java, Python, Spring Boot, MySQL, Git");
+                profile.setTechnicalInterests("AI/ML, Web Development, Cloud Computing, Hackathons");
+                profile.setNonTechnicalInterests("Problem Solving, Open Source, Team Leadership");
+                profile.setCareerGoals("Become a Senior Full-Stack AI Engineer");
+                studentProfileRepository.save(profile);
+                log.info("Updated student profile for student@campusai.dev with AI matching attributes");
+            }
+        }, () -> {
+            StudentProfile profile = new StudentProfile();
+            profile.setUser(studentUser);
+            profile.setCollege("Anna University");
+            profile.setYearOfStudy(3);
+            profile.setCgpa(8.4);
+            profile.setDepartment("Computer Science & Engineering");
+            profile.setLocation("Chennai");
+            profile.setTechnicalSkills("React, Java, Python, Spring Boot, MySQL, Git");
+            profile.setTechnicalInterests("AI/ML, Web Development, Cloud Computing, Hackathons");
+            profile.setNonTechnicalInterests("Problem Solving, Open Source, Team Leadership");
+            profile.setCareerGoals("Become a Senior Full-Stack AI Engineer");
+            profile.setSkills("React, Java, Python, Spring Boot, MySQL, Git");
+            profile.setInterests("AI/ML, Web Development, Cloud Computing, Hackathons");
+            studentProfileRepository.save(profile);
+            log.info("Created new student profile for student@campusai.dev with AI matching attributes");
+        });
+
+        // 3. Ensure standard categories exist
         EventCategory hackathonCat = getOrCreateCategory("Hackathon", "Intensive 24-48 hour coding and innovation challenges");
         EventCategory workshopCat = getOrCreateCategory("Workshop", "Hands-on learning sessions led by domain experts");
         EventCategory internshipCat = getOrCreateCategory("Internship", "Practical career opportunities for undergraduate and postgraduate students");
         EventCategory competitionCat = getOrCreateCategory("Competition", "Skill-based competitive events, algorithms, and project showcases");
 
-        // 3. Seed or update initial genuine events (APPROVED for development/demo testing)
-        log.info("Checking initial dataset of 12 genuine upcoming student opportunities...");
+        // 4. Seed or update initial genuine events (APPROVED for development/demo testing)
+        log.info("Checking initial dataset of 12 genuine upcoming student opportunities with AI eligibility rules...");
 
         List<EventSeedData> seeds = Arrays.asList(
                 new EventSeedData(
@@ -79,7 +129,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "IoT, Embedded Systems, Python, React, AI, Cloud Computing, Mobile Apps",
                         "https://sih.gov.in",
                         "https://images.unsplash.com/photo-1504384308090-c894fdcc538d?w=800",
-                        97.0
+                        97.0,
+                        "Computer Science & Engineering, Information Technology, Electronics & Communication",
+                        "2nd Year, 3rd Year, 4th Year",
+                        6.5,
+                        "All Colleges",
+                        "Python, React"
                 ),
                 new EventSeedData(
                         "NASA International Space Apps Challenge 2026",
@@ -94,7 +149,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Python, Data Science, Satellite Imagery, GIS, AI/ML, Astrophysics, Web Dev",
                         "https://www.spaceappschallenge.org",
                         "https://images.unsplash.com/photo-1451187580459-43490279c0fa?w=800",
-                        98.0
+                        98.0,
+                        "All Departments",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        6.0,
+                        "All Colleges",
+                        "Python"
                 ),
                 new EventSeedData(
                         "Microsoft Imagine Cup 2026 - Global Student AI Competition",
@@ -109,7 +169,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Microsoft Azure, OpenAI, Python, C#, Full Stack Development, Cloud Architecture",
                         "https://imaginecup.microsoft.com",
                         "https://images.unsplash.com/photo-1526374965328-7f61d4dc18c5?w=800",
-                        96.0
+                        96.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "2nd Year, 3rd Year, 4th Year",
+                        7.0,
+                        "All Colleges",
+                        "Python, Azure"
                 ),
                 new EventSeedData(
                         "Google Solution Challenge 2026",
@@ -124,7 +189,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Flutter, Firebase, Google Cloud, Gemini API, Android, Python, Web Dev",
                         "https://developers.google.com/community/gdsc-solution-challenge",
                         "https://images.unsplash.com/photo-1573164713988-8665fc963095?w=800",
-                        95.0
+                        95.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        6.5,
+                        "All Colleges",
+                        "Flutter, Firebase"
                 ),
                 new EventSeedData(
                         "ICPC India Regional Contests 2026 (Chennai & Kanpur Regionals)",
@@ -139,7 +209,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "C++, Java, Python, Advanced Data Structures, Graph Theory, Dynamic Programming",
                         "https://icpc.global",
                         "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?w=800",
-                        99.0
+                        99.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        7.5,
+                        "Recognized Universities in India",
+                        "C++, Algorithms"
                 ),
                 new EventSeedData(
                         "MLH Global Hack Week: Open Source & Builders 2026",
@@ -154,7 +229,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Git, GitHub, Open Source, JavaScript, Python, REST APIs, Documentation",
                         "https://ghw.mlh.io",
                         "https://images.unsplash.com/photo-1531482615713-2afd69097998?w=800",
-                        91.0
+                        91.0,
+                        "All Departments",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        0.0,
+                        "All Colleges",
+                        "Git"
                 ),
                 new EventSeedData(
                         "Linux Foundation LFX Mentorship - Winter & Spring Terms 2026",
@@ -169,7 +249,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Go, Rust, C, Linux Kernel, Kubernetes, Docker, Microservices, Open Source",
                         "https://mentorship.lfx.linuxfoundation.org",
                         "https://images.unsplash.com/photo-1629654297299-c8506221ca97?w=800",
-                        96.0
+                        96.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "3rd Year, 4th Year",
+                        7.0,
+                        "All Colleges",
+                        "Go, Linux, Git"
                 ),
                 new EventSeedData(
                         "GitHub Octernships - Global Student Software Engineering Internships",
@@ -184,7 +269,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Git, React, Node.js, Python, TypeScript, CI/CD, Automated Testing",
                         "https://education.github.com/globalcampus/octernships",
                         "https://images.unsplash.com/photo-1618401471353-b98afee0b2eb?w=800",
-                        97.0
+                        97.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "2nd Year, 3rd Year, 4th Year",
+                        7.0,
+                        "All Colleges",
+                        "React, Git"
                 ),
                 new EventSeedData(
                         "ETHGlobal Mumbai 2026",
@@ -199,7 +289,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Solidity, Ethereum, Web3.js, React, TypeScript, Smart Contracts, Cryptography",
                         "https://ethglobal.com/events/mumbai2026",
                         "https://images.unsplash.com/photo-1639762681485-074b7f938ba0?w=800",
-                        93.0
+                        93.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "2nd Year, 3rd Year, 4th Year",
+                        6.5,
+                        "All Colleges",
+                        "Solidity, React"
                 ),
                 new EventSeedData(
                         "Microsoft Student Ambassadors Program 2026-2027",
@@ -214,7 +309,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Azure, Technical Community Leadership, AI/ML, Cloud Computing, Public Speaking",
                         "https://studentambassadors.com",
                         "https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800",
-                        94.0
+                        94.0,
+                        "All Departments",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        6.5,
+                        "All Colleges",
+                        "Public Speaking"
                 ),
                 new EventSeedData(
                         "Tata Imagination Challenge 2026 - National Student Idea Pitch",
@@ -229,7 +329,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "Product Strategy, Technology Innovation, Pitching, Business Analytics, Sustainability",
                         "https://www.tata.com",
                         "https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?w=800",
-                        92.0
+                        92.0,
+                        "All Departments",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        6.0,
+                        "All Colleges",
+                        ""
                 ),
                 new EventSeedData(
                         "AWS Generative AI & Cloud Developer Workshop Series",
@@ -244,7 +349,12 @@ public class DatabaseSeeder implements CommandLineRunner {
                         "AWS, Amazon Bedrock, Python, Generative AI, Cloud Architecture, Serverless",
                         "https://explore.skillbuilder.aws",
                         "https://images.unsplash.com/photo-1523240795612-9a054b0db644?w=800",
-                        95.0
+                        95.0,
+                        "Computer Science & Engineering, Information Technology",
+                        "1st Year, 2nd Year, 3rd Year, 4th Year",
+                        6.0,
+                        "All Colleges",
+                        "Python"
                 )
         );
 
@@ -257,7 +367,7 @@ public class DatabaseSeeder implements CommandLineRunner {
                 Event existing = existingOpt.get();
                 boolean updated = false;
 
-                // Requirement: Update the seeded 12 demo events so that they are APPROVED and visible to students
+                // Ensure approved
                 if (!"APPROVED".equalsIgnoreCase(existing.getApprovalStatus())) {
                     existing.setApprovalStatus("APPROVED");
                     updated = true;
@@ -278,6 +388,28 @@ public class DatabaseSeeder implements CommandLineRunner {
                     existing.setImageUrl(seed.imageUrl);
                     updated = true;
                 }
+                if (existing.getEligibleYears() == null && seed.eligibleYears != null) {
+                    existing.setEligibleYears(seed.eligibleYears);
+                    updated = true;
+                }
+                if (existing.getMinCgpa() == null && seed.minCgpa != null) {
+                    existing.setMinCgpa(seed.minCgpa);
+                    updated = true;
+                }
+                if (existing.getEligibleColleges() == null && seed.eligibleColleges != null) {
+                    existing.setEligibleColleges(seed.eligibleColleges);
+                    updated = true;
+                }
+                if (existing.getMandatorySkills() == null && seed.mandatorySkills != null) {
+                    existing.setMandatorySkills(seed.mandatorySkills);
+                    updated = true;
+                }
+                if ((existing.getDepartmentTarget() == null || existing.getDepartmentTarget().equals("Computer Science & Engineering"))
+                        && seed.departmentTarget != null) {
+                    existing.setDepartmentTarget(seed.departmentTarget);
+                    updated = true;
+                }
+
                 if (updated) {
                     eventRepository.save(existing);
                     updatedCount++;
@@ -309,8 +441,11 @@ public class DatabaseSeeder implements CommandLineRunner {
                 event.setSkillsRequired(seed.skillsRequired);
                 event.setRegistrationLink(seed.registrationLink);
                 event.setImageUrl(seed.imageUrl);
-                event.setDepartmentTarget("Computer Science & Engineering");
-                // Requirement: Initial seeded demo events are APPROVED for development/demo testing
+                event.setDepartmentTarget(seed.departmentTarget);
+                event.setEligibleYears(seed.eligibleYears);
+                event.setMinCgpa(seed.minCgpa);
+                event.setEligibleColleges(seed.eligibleColleges);
+                event.setMandatorySkills(seed.mandatorySkills);
                 event.setApprovalStatus("APPROVED");
                 event.setIsApproved(true);
                 event.setQualityScore(seed.qualityScore);
@@ -333,7 +468,7 @@ public class DatabaseSeeder implements CommandLineRunner {
             }
         }
 
-        log.info("DatabaseSeeder finished: {} new demo events seeded, {} existing demo events updated to APPROVED. Total checked: {}.",
+        log.info("DatabaseSeeder finished: {} new demo events seeded, {} existing demo events updated with structured eligibility. Total checked: {}.",
                 newlyCreated, updatedCount, seeds.size());
     }
 
@@ -356,11 +491,17 @@ public class DatabaseSeeder implements CommandLineRunner {
         String registrationLink;
         String imageUrl;
         Double qualityScore;
+        String departmentTarget;
+        String eligibleYears;
+        Double minCgpa;
+        String eligibleColleges;
+        String mandatorySkills;
 
         EventSeedData(String title, String organizerName, String description, EventCategory category,
                       String location, String locationMode, LocalDateTime eventDate, LocalDateTime deadline,
                       String eligibility, String skillsRequired, String registrationLink, String imageUrl,
-                      Double qualityScore) {
+                      Double qualityScore, String departmentTarget, String eligibleYears, Double minCgpa,
+                      String eligibleColleges, String mandatorySkills) {
             this.title = title;
             this.organizerName = organizerName;
             this.description = description;
@@ -374,6 +515,11 @@ public class DatabaseSeeder implements CommandLineRunner {
             this.registrationLink = registrationLink;
             this.imageUrl = imageUrl;
             this.qualityScore = qualityScore;
+            this.departmentTarget = departmentTarget;
+            this.eligibleYears = eligibleYears;
+            this.minCgpa = minCgpa;
+            this.eligibleColleges = eligibleColleges;
+            this.mandatorySkills = mandatorySkills;
         }
     }
 }

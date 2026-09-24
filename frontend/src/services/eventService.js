@@ -244,15 +244,19 @@ const MOCK_EVENTS = [
 ];
 
 export const eventService = {
-  getAllEvents: async (approvedOnly = true) => {
+  getAllEvents: async (approvedOnly = true, eligibleOnly = false) => {
     try {
-      const res = await api.get(`/events?approvedOnly=${approvedOnly}`);
+      const res = await api.get(`/events?approvedOnly=${approvedOnly}&eligibleOnly=${eligibleOnly}`);
       return res.data;
     } catch (e) {
+      let filtered = MOCK_EVENTS;
       if (approvedOnly) {
-        return MOCK_EVENTS.filter(evt => evt.approvalStatus === 'APPROVED' || (evt.isApproved === true && !evt.approvalStatus));
+        filtered = filtered.filter(evt => evt.approvalStatus === 'APPROVED' || (evt.isApproved === true && !evt.approvalStatus));
       }
-      return MOCK_EVENTS;
+      if (eligibleOnly) {
+        filtered = filtered.filter(evt => evt.eligibilityMatch ? evt.eligibilityMatch.isEligible : true);
+      }
+      return filtered;
     }
   },
 

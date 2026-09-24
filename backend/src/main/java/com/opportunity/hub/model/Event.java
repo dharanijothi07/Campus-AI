@@ -58,6 +58,18 @@ public class Event {
     @Column(name = "image_url", length = 1000)
     private String imageUrl;
 
+    @Column(name = "eligible_years", length = 100)
+    private String eligibleYears = "ALL"; // e.g. "1,2,3,4" or "3,4" or "ALL"
+
+    @Column(name = "min_cgpa")
+    private Double minCgpa = 0.0; // 0.0 for no restriction
+
+    @Column(name = "eligible_colleges", length = 255)
+    private String eligibleColleges = "ALL";
+
+    @Column(name = "mandatory_skills", columnDefinition = "TEXT")
+    private String mandatorySkills; // comma-separated mandatory prerequisite skills
+
     @Column(name = "approval_status", length = 20, nullable = false)
     private String approvalStatus = "PENDING"; // PENDING, APPROVED, REJECTED
 
@@ -140,6 +152,18 @@ public class Event {
 
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
+
+    public String getEligibleYears() { return eligibleYears != null ? eligibleYears : "ALL"; }
+    public void setEligibleYears(String eligibleYears) { this.eligibleYears = eligibleYears; }
+
+    public Double getMinCgpa() { return minCgpa != null ? minCgpa : 0.0; }
+    public void setMinCgpa(Double minCgpa) { this.minCgpa = minCgpa; }
+
+    public String getEligibleColleges() { return eligibleColleges != null ? eligibleColleges : "ALL"; }
+    public void setEligibleColleges(String eligibleColleges) { this.eligibleColleges = eligibleColleges; }
+
+    public String getMandatorySkills() { return mandatorySkills; }
+    public void setMandatorySkills(String mandatorySkills) { this.mandatorySkills = mandatorySkills; }
 
     public String getApprovalStatus() {
         if (approvalStatus == null || approvalStatus.trim().isEmpty()) {

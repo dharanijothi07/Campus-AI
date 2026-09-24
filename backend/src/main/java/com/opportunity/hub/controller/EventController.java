@@ -20,9 +20,11 @@ public class EventController {
 
     @GetMapping
     public ResponseEntity<List<EventDto.EventResponse>> getAllEvents(
-            @RequestParam(name = "approvedOnly", required = false, defaultValue = "true") Boolean approvedOnly) {
-        // Student-facing event APIs must return ONLY APPROVED events
-        return ResponseEntity.ok(eventService.getAllEvents(true));
+            Authentication authentication,
+            @RequestParam(name = "approvedOnly", required = false, defaultValue = "true") Boolean approvedOnly,
+            @RequestParam(name = "eligibleOnly", required = false, defaultValue = "false") Boolean eligibleOnly) {
+        String email = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(eventService.getAllEvents(approvedOnly, email, eligibleOnly));
     }
 
     @PatchMapping("/{id}/approve")
@@ -33,8 +35,11 @@ public class EventController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<EventDto.EventResponse> getEventById(@PathVariable Long id) {
-        return ResponseEntity.ok(eventService.getEventById(id));
+    public ResponseEntity<EventDto.EventResponse> getEventById(
+            Authentication authentication,
+            @PathVariable Long id) {
+        String email = authentication != null ? authentication.getName() : null;
+        return ResponseEntity.ok(eventService.getEventById(id, email));
     }
 
     @PostMapping

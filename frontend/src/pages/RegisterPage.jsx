@@ -52,7 +52,7 @@ export const RegisterPage = () => {
           </div>
           <h2 className="text-2xl font-bold text-white">Student & Organizer Registration</h2>
           <p className="text-xs text-gray-400 mt-1">
-            Build your profile to activate personalized CAMPUS AI recommendations
+            Build your profile to activate personalized ACE recommendations
           </p>
         </div>
 
@@ -209,7 +209,7 @@ export const RegisterPage = () => {
             disabled={loading}
             className="w-full py-3.5 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-extrabold text-xs shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all mt-6"
           >
-            {loading ? 'Creating Profile...' : 'Complete Registration & Launch CAMPUS AI'} <UserPlus className="w-4 h-4" />
+            {loading ? 'Creating Profile...' : 'Complete Registration & Launch ACE'} <UserPlus className="w-4 h-4" />
           </button>
         </form>
 

@@ -36,7 +36,7 @@ export const LoginPage = () => {
           </div>
           <h2 className="text-2xl font-bold text-white">Welcome Back</h2>
           <p className="text-xs text-gray-400 mt-1">
-            Access your personalized student CAMPUS AI ecosystem
+            Access your personalized student ACE ecosystem
           </p>
         </div>
 
@@ -105,7 +105,7 @@ export const LoginPage = () => {
             disabled={loading}
             className="w-full py-3 rounded-xl bg-gradient-to-r from-cyan-400 to-blue-500 hover:from-cyan-300 hover:to-blue-400 text-black font-extrabold text-xs shadow-lg shadow-cyan-500/25 flex items-center justify-center gap-2 transition-all mt-4"
           >
-            {loading ? 'Authenticating...' : 'Sign In to CAMPUS AI'} <LogIn className="w-4 h-4" />
+            {loading ? 'Authenticating...' : 'Sign In to ACE'} <LogIn className="w-4 h-4" />
           </button>
         </form>
 

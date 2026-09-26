@@ -130,7 +130,7 @@ export const LandingPage = () => {
           {/* Subtle Glowing Pill Badge */}
           <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-gradient-to-r from-purple-500/10 via-cyan-500/10 to-blue-500/10 border border-cyan-500/30 text-cyan-300 text-xs font-semibold tracking-wide mb-8 ai-glow backdrop-blur-md">
             <Sparkles className="w-3.5 h-3.5 text-cyan-400 animate-pulse" />
-            <span className="tracking-wider uppercase">AI-Powered Student Opportunity Platform</span>
+            <span className="tracking-wider uppercase">ACE — AI-Powered Student Opportunity Platform</span>
           </div>
 
           {/* Main Headline */}
@@ -565,7 +565,7 @@ export const LandingPage = () => {
             <div className="flex items-center justify-between mb-8">
               <h3 className="text-xl font-bold text-white flex items-center gap-2">
                 <Flame className="w-5 h-5 text-amber-400" />
-                Live Upcoming Events from the Campus AI Database
+                Live Upcoming Events from the ACE Database
               </h3>
               <Link to="/recommendations" className="text-xs font-semibold text-cyan-400 hover:underline">
                 View All →
@@ -581,7 +581,7 @@ export const LandingPage = () => {
       </section>
 
       {/* ========================================================
-          4. ELIGIBILITY MATCH SECTION (CAMPUS AI DIFFERENTIATOR)
+          4. ELIGIBILITY MATCH SECTION (ACE DIFFERENTIATOR)
          ======================================================== */}
       <section id="eligibility" className="relative py-24 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto">
         <div className="text-center max-w-3xl mx-auto mb-16">
@@ -592,7 +592,7 @@ export const LandingPage = () => {
             Know before <span className="gradient-text">you apply.</span>
           </h2>
           <p className="mt-4 text-base text-gray-400 leading-relaxed">
-            Never waste time applying to events you are disqualified for. Campus AI evaluates your department, year, CGPA, and mandatory skills with complete transparency.
+            Never waste time applying to events you are disqualified for. ACE evaluates your department, year, CGPA, and mandatory skills with complete transparency.
           </p>
         </div>
 
@@ -757,7 +757,7 @@ export const LandingPage = () => {
             Search naturally. <span className="gradient-text">Discover intelligently.</span>
           </h2>
           <p className="mt-4 text-base text-gray-400 leading-relaxed">
-            Ask Campus AI in plain conversational English. The smart engine extracts location, department, eligibility, and skill criteria in milliseconds.
+            Ask ACE in plain conversational English. The smart engine extracts location, department, eligibility, and skill criteria in milliseconds.
           </p>
         </div>
 
@@ -863,7 +863,7 @@ export const LandingPage = () => {
             </div>
             <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight leading-tight">
               Your personal <br />
-              <span className="gradient-text">Campus AI Advisor.</span>
+              <span className="gradient-text">ACE Advisor.</span>
             </h2>
             <p className="text-base text-gray-400 leading-relaxed">
               Ask questions about upcoming deadlines, eligibility rules, skill preparation roadmaps, and team requirements in natural conversation.
@@ -904,7 +904,7 @@ export const LandingPage = () => {
                 </div>
                 <div>
                   <h4 className="text-sm font-bold text-white flex items-center gap-2">
-                    Campus AI Assistant
+                    ACE Assistant
                     <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
                   </h4>
                   <span className="text-[11px] text-gray-400">Context: 3rd Year CSE • Python & ML</span>
@@ -967,7 +967,7 @@ export const LandingPage = () => {
             <Cpu className="w-4 h-4" /> Simple 3-Step Pipeline
           </div>
           <h2 className="text-3xl sm:text-5xl font-extrabold text-white tracking-tight">
-            How Campus AI works.
+            How ACE works.
           </h2>
           <p className="mt-4 text-base text-gray-400 leading-relaxed">
             From setup to confident application in less than 3 minutes.

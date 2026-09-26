@@ -39,8 +39,8 @@ export const Navbar = () => {
             </div>
           </div>
           <div>
-            <span className="font-extrabold text-xl tracking-wider text-white flex items-center gap-1.5">
-              CAMPUS <span className="gradient-text">AI</span>
+            <span className="font-extrabold text-2xl tracking-wider text-white flex items-center gap-1.5">
+              <span className="gradient-text">ACE</span>
             </span>
             <span className="text-[10px] text-cyan-400/90 font-medium tracking-wider block uppercase -mt-1">
               Student Opportunity Platform

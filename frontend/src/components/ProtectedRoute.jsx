@@ -7,8 +7,8 @@ export const ProtectedRoute = ({ children, requiredRole }) => {
 
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#0B0F19] text-cyan-400 font-bold">
-        Loading CAMPUS AI...
+      <div className="min-h-screen flex items-center justify-center bg-[#05070E] text-cyan-400 font-bold">
+        Loading ACE...
       </div>
     );
   }

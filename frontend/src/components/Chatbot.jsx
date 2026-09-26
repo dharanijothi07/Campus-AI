@@ -92,7 +92,7 @@ export const Chatbot = () => {
               </div>
               <div>
                 <h4 className="font-bold text-sm text-white flex items-center gap-1">
-                  CAMPUS AI Assistant
+                  ACE Assistant
                 </h4>
                 <span className="text-[10px] text-cyan-400 flex items-center gap-1">
                   <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-pulse" /> Live DB Connected

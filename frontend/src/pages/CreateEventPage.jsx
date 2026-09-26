@@ -16,7 +16,7 @@ export const CreateEventPage = () => {
     deadline: '2026-10-20T23:59',
     eligibility: 'Open to all CSE, IT, and ECE engineering students',
     skillsRequired: 'React, Java, Python, Spring Boot',
-    registrationLink: 'https://campusai.dev/register'
+    registrationLink: 'https://ace.dev/register'
   });
 
   const [generatingDesc, setGeneratingDesc] = useState(false);
@@ -192,7 +192,7 @@ export const CreateEventPage = () => {
               name="registrationLink"
               value={formData.registrationLink}
               onChange={handleChange}
-              placeholder="https://campusai.dev/register"
+              placeholder="https://ace.dev/register"
               className="w-full bg-gray-900 border border-gray-800 rounded-xl px-4 py-3 text-xs text-white focus:outline-none focus:border-cyan-500"
             />
           </div>

@@ -29,7 +29,7 @@ public class NotificationService {
 
         if (list.isEmpty()) {
             // Provide default initial notification for demo
-            Notification defaultNotif = new Notification(user, "🎯 Welcome to CAMPUS AI!", 
+            Notification defaultNotif = new Notification(user, "🎯 Welcome to ACE!", 
                     "Your profile has been analyzed. Check your personalized recommendations feed!", "RECOMMENDATION");
             notificationRepository.save(defaultNotif);
             list = List.of(defaultNotif);

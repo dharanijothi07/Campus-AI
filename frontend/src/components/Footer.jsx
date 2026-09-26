@@ -8,7 +8,7 @@ export const Footer = () => {
         <div className="space-y-3">
           <div className="flex items-center gap-2">
             <Sparkles className="w-5 h-5 text-cyan-400" />
-            <span className="font-extrabold text-lg text-white">CAMPUS AI</span>
+            <span className="font-extrabold text-lg text-white">ACE</span>
           </div>
           <p className="text-xs text-gray-400 leading-relaxed">
             AI-powered student opportunity ecosystem designed to scale event discovery, recommendations, credibility verification, and participation for students.
@@ -42,13 +42,13 @@ export const Footer = () => {
           </p>
           <div className="flex items-center gap-3 mt-4 text-gray-400">
             <a href="https://github.com/dharanijothi07/Campus-AI" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors" title="GitHub"><Github className="w-5 h-5" /></a>
-            <a href="https://campusai.dev" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors" title="Live Site"><Globe className="w-5 h-5" /></a>
+            <a href="https://ace.dev" target="_blank" rel="noreferrer" className="hover:text-cyan-400 transition-colors" title="Live Site"><Globe className="w-5 h-5" /></a>
           </div>
         </div>
       </div>
 
       <div className="max-w-7xl mx-auto pt-6 border-t border-white/[0.06] flex flex-col sm:flex-row items-center justify-between text-xs text-gray-500">
-        <p>© 2026 CAMPUS AI. All rights reserved.</p>
+        <p>© 2026 ACE. All rights reserved.</p>
         <div className="flex gap-4 mt-2 sm:mt-0">
           <span className="hover:text-gray-400 cursor-pointer">Privacy Policy</span>
           <span className="hover:text-gray-400 cursor-pointer">Terms of Service</span>
